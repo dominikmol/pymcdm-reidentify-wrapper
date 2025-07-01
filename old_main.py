@@ -50,7 +50,7 @@ class GUIApp(QWidget):
             self.file_path.setText(selectedFile)
             print(selectedFile)
             # self.loadData(selectedFile)
-            helpers.loadData(self, selectedFile)
+            old_helpers.loadData(self, selectedFile)
         else:
             print("File selection canceled")
 
