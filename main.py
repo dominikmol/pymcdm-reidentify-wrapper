@@ -1,45 +1,22 @@
-# import sys
-from rich import print
-from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout, QFileDialog, QLabel
+import sys
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+
 import helpers
+from index_ui import Ui_MainWindow 
 
-
-class GUIApp(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("pymcdm-reidentify wrapper")
-        self.resize(500, 600)
-
-        layout = QVBoxLayout()
-        self.setLayout(layout)
-
-        self.data_matrix = []
-
-        # declaring widgets/inputs
-        self.file_path = QLineEdit()
-        self.browse_files = QPushButton("Import Data")
-        self.types_label = QLabel("types of criteria")
-        self.types = QLineEdit()
-        self.calc_weights = QPushButton("Calculate TOPSIS weights with SITW")
-        self.output = QTextEdit()
-
-        # self.types.setText("1, 1, 1, -1, -1, -1, -1")
-        self.types.setText("1, 1, 1, -1, -1")
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
         # actions
-        self.browse_files.clicked.connect(self.clickHandle)
-        # self.calc_weights.clicked.connect(self.calcSITW)
-        self.calc_weights.clicked.connect(lambda: helpers.calculate_STFN(self))
+        self.ui.import_data.clicked.connect(self.loadDataHandle)
+        self.ui.bounds_gen_btn.clicked.connect(self.makeBoundsHandle)
+        self.ui.calc_stfn.clicked.connect(lambda: helpers.calculateSTFN(self))
 
-        # adding widgets/inputs to layout
-        layout.addWidget(self.file_path)
-        layout.addWidget(self.browse_files)
-        layout.addWidget(self.types_label)
-        layout.addWidget(self.types)
-        layout.addWidget(self.calc_weights)
-        layout.addWidget(self.output)
 
-    def clickHandle(self):
+    def loadDataHandle(self):
         dialog = QFileDialog()
         dialog.setNameFilter("Data File (*.csv)")
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
@@ -47,30 +24,20 @@ class GUIApp(QWidget):
 
         if dialogSuccesful:
             selectedFile = dialog.selectedFiles()[0]
-            self.file_path.setText(selectedFile)
+            self.ui.file_path.setText(selectedFile)
             print(selectedFile)
-            # self.loadData(selectedFile)
             helpers.loadData(self, selectedFile)
         else:
             print("File selection canceled")
 
-
-def main():
-    app = QApplication([])
-    app.setStyleSheet('''
-        QWidget {
-            font-size: 25px;
-    }
-        QPushButton {
-            font-size: 25px;
-        }              
-    ''')
-    window = GUIApp()
-    window.show()
-    app.exec()
+    def makeBoundsHandle(self):
+        self.bounds = helpers.make_bounds(self.data_matrix)
+        formatted = ', '.join(f'({x}, {y})' for x, y in self.bounds)
+        self.ui.bounds_data.setPlainText(formatted)
 
 
 if __name__ == "__main__":
-    main()
-
-# 1, 1, 1, -1, -1, -1, -1
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    app.exec()

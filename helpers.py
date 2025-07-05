@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 from mealpy.swarm_based.PSO import OriginalPSO
-from pymcdm_reidentify.methods import SITW, STFN
+from pymcdm_reidentify.methods import STFN
 from pymcdm.methods import TOPSIS
-from pymcdm.weights import entropy_weights
+from PySide6.QtWidgets import QTableWidgetItem
 
 
 def make_bounds(matrix):
@@ -17,38 +17,45 @@ def loadData(app, file_loc):
     if data.size == 0:
         return
     app.data_matrix = data.iloc[:, 1:].to_numpy()
-    print("matrix")
-    print(app.data_matrix)
-    print("-----------------------------------------------")
+    matrix = data.to_numpy()
+    fieldnames = list(data.columns)
+    
+    # print("Full matrix:")
+    # print(matrix)
+    # print("Field names:")
+    # print(fieldnames)
+    # print("Data matrix (numeric only):")
+    # print(app.data_matrix)
+
+    table = app.ui.data_table
+    table.clear()  # Clear existing content
+    table.setRowCount(matrix.shape[0])
+    table.setColumnCount(matrix.shape[1])
+    table.setHorizontalHeaderLabels(fieldnames)
+
+    for row in range(matrix.shape[0]):
+        for col in range(matrix.shape[1]):
+            item = QTableWidgetItem(str(matrix[row][col]))
+            table.setItem(row, col, item)
 
 
-def calculate_STFN(app):
-    app.output.clear()
-    types = [int(x.strip()) for x in app.types.text().split(',')]
-    bounds = make_bounds(app.data_matrix)
-    stoch = OriginalPSO(epoch=1000, pop_size=100)
-    # expert_rank = [3, 1, 19, 20, 5, 7, 2, 12, 8,
-    #                15, 4, 6, 10, 14, 9, 11, 13, 16, 17, 18]
-    expert_rank = [3, 1, 9, 10, 5, 7, 2, 6, 8, 4]
+def calculateSTFN(app):
+    print("-----------------------------------------")
+    print("calculateSTFN")
+    app.ui.stfn_results.clear()
+    criteria_types = [int(x.strip()) for x in app.ui.criteria_types.text().split(',')]
+    bounds = app.bounds
+    stoch = OriginalPSO(epoch=1000, pop_size=int(app.ui.pso_pop_size.text()))
+    expert_rank = np.array([int(x.strip()) for x in app.ui.expert_rank.text().split(',')])
+    # expert_rank = [int(x.strip()) for x in app.ui.expert_rank.text().split(',')] # [3, 1, 9, 10, 5, 7, 2, 6, 8, 4]
+    print(f"expert rank: {expert_rank}")
+    print(f"data matrix: {app.data_matrix}")
 
     print(f"bounds: {bounds}")
-    print(f"types: {types}")
-
-    weights = entropy_weights(app.data_matrix)
-    topsis = TOPSIS()
-    preference = topsis(app.data_matrix, weights, types)
-    rank = topsis.rank(preference)
-    print(f"weights: {weights}")
-    print(f"rank: {rank}")
-    print(f"expert rank: {expert_rank}")
+    print(f"types: {criteria_types}")
 
     stfn = STFN(stoch.solve, TOPSIS(), bounds)
-    stfn.fit(app.data_matrix, rank, log_to=None)
+    stfn.fit(app.data_matrix, expert_rank, log_to=None)
     print(f"cores: {stfn.cores}")
-    print(stfn())
-    print(stfn)
-    # print(f"model stfn: {stfn()}")
-
-    # sitw = SITW(stoch.solve, TOPSIS(), types)
-    # sitw.fit(app.data_matrix, rank, log_to=None)
-    # print(f"model sitw: {sitw()}")
+    app.ui.stfn_results.setPlainText(
+        f"STFN cores: {stfn.cores}")
