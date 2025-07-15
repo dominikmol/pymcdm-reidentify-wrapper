@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 
 import helpers
 from index_ui import Ui_MainWindow 
@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
         # initial data
         self.stfn = None
         self.data_matrix = None
+        self.bounds = None
         self.stfn_plot_data = []
         self.stfn_plot_index = 0  
 
@@ -35,12 +36,20 @@ class MainWindow(QMainWindow):
         if dialog_successful:
             selected_file = dialog.selectedFiles()[0]
             self.ui.file_path.setText(selected_file)
-            print(selected_file)
+            # print(selected_file)
             helpers.load_data(self, selected_file)
         else:
             print("File selection canceled")
 
     def make_bounds_handle(self):
+        if self.data_matrix is None or self.data_matrix.size == 0:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Error")
+            msg.setInformativeText('Please import data first.')
+            msg.setWindowTitle("Error")
+            msg.exec()
+            return
         self.bounds = helpers.make_bounds(self.data_matrix)
         formatted = ', '.join(f'({x}, {y})' for x, y in self.bounds)
         self.ui.bounds_data.setPlainText(formatted)

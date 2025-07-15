@@ -32,14 +32,6 @@ def load_data(app, file_loc):
             
 
 def make_bounds(data_matrix):
-    if data_matrix is None or data_matrix.size == 0:
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error")
-        msg.setInformativeText('Please import data first.')
-        msg.setWindowTitle("Error")
-        msg.exec_()
-        return
     bounds = np.array([[np.min(data_matrix[:, i]), np.max(data_matrix[:, i])]
                       for i in range(data_matrix.shape[1])])
     return bounds.tolist()
@@ -53,7 +45,7 @@ def calculate_STFN(app):
         msg.setText("Error")
         msg.setInformativeText('Please import data first.')
         msg.setWindowTitle("Error")
-        msg.exec_()
+        msg.exec()
         return
 
     print("-----------------------------------------")
@@ -116,7 +108,7 @@ def calculate_MCDA(app):
         msg.setText("Error")
         msg.setInformativeText('Please run STFN first.')
         msg.setWindowTitle("Error")
-        msg.exec_()
+        msg.exec()
         return
     body = None
 
