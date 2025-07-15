@@ -11,12 +11,20 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         # actions
-        self.ui.import_data.clicked.connect(self.loadDataHandle)
-        self.ui.bounds_gen_btn.clicked.connect(self.makeBoundsHandle)
-        self.ui.calc_stfn.clicked.connect(lambda: helpers.calculateSTFN(self))
+        self.ui.import_data.clicked.connect(self.load_data_handle)
+        self.ui.bounds_gen_btn.clicked.connect(self.make_bounds_handle)
+        self.ui.calc_stfn.clicked.connect(lambda: helpers.calculate_STFN(self))
+        self.ui.calc_mcda.clicked.connect(lambda: helpers.calculate_MCDA(self))
+        self.ui.expert_rank.textChanged.connect(self.change_expert_rank_handle)
+        self.ui.prev_plot_btn_stfn.clicked.connect(self.show_prev_stfn_plot)
+        self.ui.next_plot_btn_stfn.clicked.connect(self.show_next_stfn_plot)
+
+        self.stfn = None
+        self.stfn_plot_data = []
+        self.stfn_plot_index = 0
 
 
-    def loadDataHandle(self):
+    def load_data_handle(self):
         dialog = QFileDialog()
         dialog.setNameFilter("Data File (*.csv)")
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
@@ -30,10 +38,24 @@ class MainWindow(QMainWindow):
         else:
             print("File selection canceled")
 
-    def makeBoundsHandle(self):
+    def make_bounds_handle(self):
         self.bounds = helpers.make_bounds(self.data_matrix)
         formatted = ', '.join(f'({x}, {y})' for x, y in self.bounds)
         self.ui.bounds_data.setPlainText(formatted)
+
+    def change_expert_rank_handle(self):
+        expert_rank = self.ui.expert_rank.text()
+        self.ui.ranking_old.setPlainText(expert_rank)
+
+    def show_prev_stfn_plot(self):
+        if self.stfn_plot_data:
+            index = (self.stfn_plot_index - 1) % len(self.stfn_plot_data)
+            helpers.show_stfn_plot(self, index)
+
+    def show_next_stfn_plot(self):
+        if self.stfn_plot_data:
+            index = (self.stfn_plot_index + 1) % len(self.stfn_plot_data)
+            helpers.show_stfn_plot(self, index)
 
 
 if __name__ == "__main__":
