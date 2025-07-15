@@ -375,6 +375,32 @@
        </rect>
       </property>
      </widget>
+     <widget class="QPushButton" name="prev_plot_btn_stfn">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>280</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>prev plot</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="next_plot_btn_stfn">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>280</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>next plot</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="mcda_tab">
      <attribute name="title">
@@ -561,7 +587,7 @@
         <bool>false</bool>
        </property>
        <property name="placeholderText">
-        <string>1, 1, 1, -1, -1</string>
+        <string>0.14192737, 0.22833073, 0.22020835, 0.21593906, 0.19359448</string>
        </property>
       </widget>
      </widget>
