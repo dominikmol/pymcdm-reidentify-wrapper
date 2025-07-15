@@ -10,6 +10,12 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # initial data
+        self.stfn = None
+        self.data_matrix = None
+        self.stfn_plot_data = []
+        self.stfn_plot_index = 0  
+
         # actions
         self.ui.import_data.clicked.connect(self.load_data_handle)
         self.ui.bounds_gen_btn.clicked.connect(self.make_bounds_handle)
@@ -17,24 +23,20 @@ class MainWindow(QMainWindow):
         self.ui.calc_mcda.clicked.connect(lambda: helpers.calculate_MCDA(self))
         self.ui.expert_rank.textChanged.connect(self.change_expert_rank_handle)
         self.ui.prev_plot_btn_stfn.clicked.connect(self.show_prev_stfn_plot)
-        self.ui.next_plot_btn_stfn.clicked.connect(self.show_next_stfn_plot)
-
-        self.stfn = None
-        self.stfn_plot_data = []
-        self.stfn_plot_index = 0
+        self.ui.next_plot_btn_stfn.clicked.connect(self.show_next_stfn_plot)              
 
 
     def load_data_handle(self):
         dialog = QFileDialog()
         dialog.setNameFilter("Data File (*.csv)")
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        dialogSuccesful = dialog.exec()
+        dialog_successful = dialog.exec()
 
-        if dialogSuccesful:
-            selectedFile = dialog.selectedFiles()[0]
-            self.ui.file_path.setText(selectedFile)
-            print(selectedFile)
-            helpers.loadData(self, selectedFile)
+        if dialog_successful:
+            selected_file = dialog.selectedFiles()[0]
+            self.ui.file_path.setText(selected_file)
+            print(selected_file)
+            helpers.load_data(self, selected_file)
         else:
             print("File selection canceled")
 
