@@ -34,7 +34,7 @@ def load_data(app, file_loc):
 def make_bounds(data_matrix):
     bounds = np.array([[np.min(data_matrix[:, i]), np.max(data_matrix[:, i])]
                       for i in range(data_matrix.shape[1])])
-    return bounds.tolist()
+    return bounds #.tolist()
 
 
 #? STFN
@@ -55,13 +55,14 @@ def calculate_STFN(app):
     app.stfn_plot_index = 0
 
     bounds = app.bounds
+    we = np.array([0.15, 0.228, 0.222, 0.21, 0.19])
     stoch = OriginalPSO(epoch=1000, pop_size=int(app.ui.pso_pop_size.text()))
     expert_rank = np.array([int(x.strip()) for x in app.ui.expert_rank.text().split(',')])
     print(f"expert rank: {expert_rank}")
     print(f"data matrix: {app.data_matrix}")
     print(f"bounds: {bounds}")
 
-    stfn = STFN(stoch.solve, TOPSIS(), bounds)
+    stfn = STFN(stoch.solve, TOPSIS(), bounds, we)
     stfn.fit(app.data_matrix, expert_rank, log_to=None)
     app.stfn = stfn
     print(f"cores: {stfn.cores}")
@@ -131,7 +132,7 @@ def calculate_MCDA(app):
         f"{method} result: {body.rank}\n"
     )
 
-    types = [int(x.strip()) for x in app.ui.criteria_types.text().split(',')]
+    types = np.array([int(x.strip()) for x in app.ui.criteria_types.text().split(',')])
     weights = np.array([float(x.strip()) for x in app.ui.criteria_weights.text().split(',')])
     print(f"types: {types}")
     print(f"weights: {weights}")
@@ -160,9 +161,10 @@ def show_mcda_plot(app, body, weights, types, method):
         app.bounds, 
         esp=app.stfn.cores, 
         model_kwargs={'weights': weights, 'types': types}, 
-        text_kwargs={'text': '$TFNs_{Cores}$'})
+        text_kwargs={'text': '$TFNs_{Cores}$'},
+        ax = ax)
     ax.set_title(f'STFN-{method}')
-    canvas = FigureCanvas(fig)
-    scene.addWidget(canvas)
-    app.ui.mcda_plot.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
-    # plt.show()
+    # canvas = FigureCanvas(fig)
+    # scene.addWidget(canvas)
+    # app.ui.mcda_plot.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+    plt.show()
