@@ -12,10 +12,13 @@ class MainWindow(QMainWindow):
 
         # initial data
         self.stfn = None
+        self.data = None
         self.data_matrix = None
         self.bounds = None
+        self.weights = None
+        self.types = None
         self.stfn_plot_data = []
-        self.stfn_plot_index = 0  
+        self.stfn_plot_index = 0
 
         # actions
         self.ui.import_data.clicked.connect(self.load_data_handle)
@@ -36,7 +39,6 @@ class MainWindow(QMainWindow):
         if dialog_successful:
             selected_file = dialog.selectedFiles()[0]
             self.ui.file_path.setText(selected_file)
-            # print(selected_file)
             helpers.load_data(self, selected_file)
         else:
             print("File selection canceled")
