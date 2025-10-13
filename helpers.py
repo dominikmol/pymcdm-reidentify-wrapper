@@ -119,8 +119,7 @@ def tfn_plot(tfn,
     width = abs(b - a)
     start = a - width * 0.1
     stop  = b + width * 0.1
-    n_points = max(150, int(width * 100))
-    x = np.linspace(start, stop, n_points)
+    x = np.linspace(start, stop, 150)
 
     ax.plot(x, tfn(x), **plot_kwargs)
 
