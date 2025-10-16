@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1037</width>
+    <height>818</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>900</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget#centralwidget {
+    background-color: #f5f7f9;
+}</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="nav" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QWidget#nav {
+    background-color: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #0078D7, stop:1 #005A9E
+    );
+	border: none;
+}
+
+QPushButton {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: left;
+    font-weight: 500;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 0.15);
+}</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="lbl_app_title">
+         <property name="styleSheet">
+          <string notr="true">QLabel#lbl_app_title {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+}</string>
+         </property>
+         <property name="text">
+          <string>pymcdm-reidentify</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_data_page">
+         <property name="minimumSize">
+          <size>
+           <width>220</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Data</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_stfn_page">
+         <property name="minimumSize">
+          <size>
+           <width>220</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>stfn</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_mcda_page">
+         <property name="minimumSize">
+          <size>
+           <width>220</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>mcda</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QStackedWidget" name="pages">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="data_page">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QWidget" name="data_input_container" native="true">
+          <widget class="QLabel" name="lbl_data_management">
+           <property name="geometry">
+            <rect>
+             <x>60</x>
+             <y>30</y>
+             <width>191</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Data Management</string>
+           </property>
+          </widget>
+          <widget class="QTextEdit" name="txt_data_input">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>90</y>
+             <width>551</width>
+             <height>71</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="btn_load_data">
+           <property name="geometry">
+            <rect>
+             <x>580</x>
+             <y>90</y>
+             <width>171</width>
+             <height>71</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="data_table_container" native="true">
+          <widget class="QLabel" name="lbl_data_view">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>20</y>
+             <width>47</width>
+             <height>13</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Data</string>
+           </property>
+          </widget>
+          <widget class="QTableView" name="tbl_data_view">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>50</y>
+             <width>751</width>
+             <height>341</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stfn_page">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QWidget" name="stfn_title_container" native="true">
+          <widget class="QLabel" name="lbl_stfn_analysis">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>30</y>
+             <width>241</width>
+             <height>51</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>STFN Analysis
+</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="stfn_main_container" native="true">
+          <widget class="QWidget" name="stfn_parameters_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>251</width>
+             <height>381</height>
+            </rect>
+           </property>
+           <widget class="QLabel" name="lbl_parameters">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>71</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Parameters</string>
+            </property>
+           </widget>
+           <widget class="QPlainTextEdit" name="plainTextEdit">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>70</y>
+              <width>231</width>
+              <height>71</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_bounds">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>50</y>
+              <width>131</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Bounds for Criteria</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="btn_generate_bounds">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>150</y>
+              <width>231</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Generate Bounds</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_alternatives_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>180</y>
+              <width>161</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Alternatives Ranking</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_population_size">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>280</y>
+              <width>161</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Population Size</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_criteria_weights">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>230</y>
+              <width>161</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Criteria Weights</string>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_alternatives_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>200</y>
+              <width>221</width>
+              <height>21</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_criteria_weights">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>250</y>
+              <width>221</width>
+              <height>21</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_population_size">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>300</y>
+              <width>221</width>
+              <height>21</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="btn_calculate_stfn">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>350</y>
+              <width>231</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate STFN</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="stfn_results_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>270</x>
+             <y>10</y>
+             <width>491</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <widget class="QLabel" name="lbl_stfn_results">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>71</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Results</string>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_stfn_results">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>30</y>
+              <width>451</width>
+              <height>41</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="stfn_visualization_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>270</x>
+             <y>100</y>
+             <width>491</width>
+             <height>291</height>
+            </rect>
+           </property>
+           <widget class="QGraphicsView" name="gv_stfn_visualization">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>40</y>
+              <width>491</width>
+              <height>251</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_stfn_visualization">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>71</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Visualization</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="btn_previous_visualization">
+            <property name="geometry">
+             <rect>
+              <x>310</x>
+              <y>10</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Previous</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="btn_next_visualization">
+            <property name="geometry">
+             <rect>
+              <x>400</x>
+              <y>10</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Next</string>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="mcda_page">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QWidget" name="mcda_title_container" native="true">
+          <widget class="QLabel" name="lbl_mcda_title">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>30</y>
+             <width>141</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>MCDA Methods</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="mcda_main_container" native="true">
+          <widget class="QWidget" name="mcda_config_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>181</width>
+             <height>381</height>
+            </rect>
+           </property>
+           <widget class="QLabel" name="lbl_mcda_config">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>131</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Method Configuration
+</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_mcda_methods">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>35</y>
+              <width>101</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>MCDA Method</string>
+            </property>
+           </widget>
+           <widget class="QComboBox" name="cb_mcda_method">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>80</y>
+              <width>161</width>
+              <height>22</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_criteria_types">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>120</y>
+              <width>151</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Types of criteria</string>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_criteria_types">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>150</y>
+              <width>161</width>
+              <height>21</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="btn_calculate_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>350</y>
+              <width>161</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate Ranking</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="mcda_new_ranking_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>210</x>
+             <y>10</y>
+             <width>551</width>
+             <height>51</height>
+            </rect>
+           </property>
+           <widget class="QLabel" name="lbl_new_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>0</y>
+              <width>71</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>New Ranking</string>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_new_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>25</y>
+              <width>531</width>
+              <height>21</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="mcda_old_ranking_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>210</x>
+             <y>80</y>
+             <width>551</width>
+             <height>51</height>
+            </rect>
+           </property>
+           <widget class="QLabel" name="lbl_old_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>0</y>
+              <width>81</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Old Ranking</string>
+            </property>
+           </widget>
+           <widget class="QTextEdit" name="txt_old_ranking">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>531</width>
+              <height>21</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="mcda_visualization_container" native="true">
+           <property name="geometry">
+            <rect>
+             <x>210</x>
+             <y>140</y>
+             <width>551</width>
+             <height>251</height>
+            </rect>
+           </property>
+           <widget class="QPushButton" name="btn_compare_ranks">
+            <property name="geometry">
+             <rect>
+              <x>320</x>
+              <y>10</y>
+              <width>101</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Rank Comaprison</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="btn_rank_correlation">
+            <property name="geometry">
+             <rect>
+              <x>430</x>
+              <y>10</y>
+              <width>111</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Rank Corelation</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_mcda_visualization">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>81</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Visualization</string>
+            </property>
+           </widget>
+           <widget class="QGraphicsView" name="gv_mcda_visualization">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>40</y>
+              <width>531</width>
+              <height>201</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
