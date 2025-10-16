@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import Navbar from "../components/navbar.svelte";
 
   let name = $state("");
   let greetMsg = $state("");
@@ -12,6 +13,7 @@
 </script>
 
 <main class="container">
+  <Navbar />
   <h1>Welcome to Tauri + Svelte</h1>
 
   <div class="row">
