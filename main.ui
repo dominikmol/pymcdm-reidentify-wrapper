@@ -6,24 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1037</width>
-    <height>818</height>
+    <width>1200</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>900</width>
-    <height>650</height>
+    <width>1200</width>
+    <height>850</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+	background-color: #EEEEEE;
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">QWidget#centralwidget {
-    background-color: #f5f7f9;
-}</string>
+    <string notr="true"/>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
     <property name="spacing">
@@ -63,42 +66,75 @@
       </property>
       <property name="styleSheet">
        <string notr="true">QWidget#nav {
-    background-color: qlineargradient(
-        x1:0, y1:0, x2:0, y2:1,
-        stop:0 #0078D7, stop:1 #005A9E
-    );
-	border: none;
+    /* Ulepszenie: Średnio ciemny, profesjonalny błękit - idealna równowaga */
+    background-color: #4A89C9; 
+    /* Subtelna linia dla wydzielenia Navbara */
+    border-right: 1px solid #3c72b0;
 }
 
+/* Tytuł aplikacji */
+QLabel#lbl_app_title {
+    /* Biały tekst dla maksymalnej czytelności */
+    color: #FFFFFF; 
+    font-size: 17px;
+    font-weight: 700;
+    padding: 16px 10px;
+    text-align: center;
+}
+
+/* Przyciski w nawigacji */
 QPushButton {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    text-align: left;
+    /* Ulepszenie: Stonowany błękit (#75aadb) jako przycisk normalny */
+    background-color: #75aadb;
+    /* Biały tekst na niebieskim przycisku */
+    color: #FFFFFF;
+    border: 2px solid #3c72b0;
+    border-radius: 6px;
+	margin-bottom: 6px;
+    /*padding: 10px 12px;
+    margin: 6px 12px;*/
+    text-align: center; 
+    font-size: 13px;
     font-weight: 500;
+    min-height: 40px;
+    min-width: 200px;
 }
 
+/* Hover - subtelne przyciemnienie */
 QPushButton:hover {
-    background-color: rgba(255, 255, 255, 0.25);
+    /* Lekkie przyciemnienie przycisku */
+    background-color: #619bd1;
+    border: none;
 }
 
+/* Kliknięty / aktywny */
 QPushButton:pressed {
-    background-color: rgba(255, 255, 255, 0.15);
+    /* Efekt wciśnięcia */
+    background-color: #538cc4;
+    border: none;
+}
+
+/* Zaznaczony przycisk (np. aktualna strona) */
+QPushButton:checked {
+    /* Ulepszenie: Czysty, wyrazisty błękit (#5B9ADF) dla aktywnej strony */
+    background-color: #5B9ADF; 
+    /* Dajemy ciemniejszą ramkę dla odróżnienia */
+    border: 1px solid #3c72b0; 
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+/* Dodatkowe wyrównanie i przestrzeń */
+QVBoxLayout, QHBoxLayout {
+    spacing: 8px;
+    margin: 0;
 }</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="lbl_app_title">
          <property name="styleSheet">
-          <string notr="true">QLabel#lbl_app_title {
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-}</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>pymcdm-reidentify</string>
@@ -122,8 +158,8 @@ QPushButton:pressed {
         <widget class="QPushButton" name="btn_data_page">
          <property name="minimumSize">
           <size>
-           <width>220</width>
-           <height>40</height>
+           <width>204</width>
+           <height>50</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -141,8 +177,8 @@ QPushButton:pressed {
         <widget class="QPushButton" name="btn_stfn_page">
          <property name="minimumSize">
           <size>
-           <width>220</width>
-           <height>40</height>
+           <width>204</width>
+           <height>50</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -160,8 +196,8 @@ QPushButton:pressed {
         <widget class="QPushButton" name="btn_mcda_page">
          <property name="minimumSize">
           <size>
-           <width>220</width>
-           <height>40</height>
+           <width>204</width>
+           <height>50</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -203,567 +239,774 @@ QPushButton:pressed {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="data_page">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="styleSheet">
+        <string notr="true">/* --- OGÓLNE STYLI DLA TŁA --- */
+
+/* Tło centralnej sekcji powinno być jasne i neutralne */
+QWidget#centralwidget {
+    background-color: #F8F9FA; /* Bardzo jasny szary/biały */
+}
+
+/* --- NAGŁÓWKI I TEKST --- */
+
+/* Ogólny styl dla etykiet (Label) */
+QLabel {
+    color: #1b2735; /* Ciemny, czytelny tekst */
+}
+
+/* Styl dla głównego nagłówka strony (np. lbl_data_management) */
+QLabel#lbl_data_management {
+    /*color: #1b2735;*/
+    font-size: 24px; 
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+/* --- KONTENERY GRUPUJĄCE (QGroupBox) --- */
+
+QGroupBox {
+    /* Użycie koloru Navbara (#4A89C9) dla tytułu grupy, aby zachować spójność */
+    color: #4A89C9; 
+    font-weight: bold;
+    border: 1px solid #c3cedb; /* Subtelna, jasnoszara ramka */
+    border-radius: 4px;
+    margin-top: 10px; 
+    padding: 10px;
+}
+
+QGroupBox::title {
+    /* Stylizacja tytułu grupy */
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    color: #4A89C9; 
+    font-size: 12px;
+}
+
+QTextEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+/* KOREKTA: Ograniczenie wysokości pola tekstowego do wyświetlania ścieżki pliku */
+QTextEdit#txt_data_input {
+    min-height: 25px; 
+    max-height: 35px; /* Nadaje stałą, małą wysokość */
+}
+
+/* --- WIDŻET TABELI (QTableWidget) --- */
+
+QTableWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    gridline-color: #e5e5e5; /* Bardzo jasne linie siatki */
+    /* KLUCZOWA POPRAWKA: Ustawienie koloru tekstu dla całej tabeli */
+    color: #1b2735; 
+}
+
+/* Nagłówki kolumn w tabeli */
+
+QHeaderView {
+    /* Ustaw tło całego nagłówka na jasne, takie jak tło sekcji lub kontenera */
+    background-color: #EFEFEF; 
+}
+
+QHeaderView::section {
+    background-color: #EFEFEF; /* Jasnoszare tło nagłówków */
+    color: #1b2735;
+    padding: 4px;
+    border: 1px solid #c3cedb;
+    font-weight: 600;
+}
+
+/* --- OGÓLNE PRZYCISKI (Przycisk w grupie danych, np. btn_load_data) --- */
+/* Uwaga: Te style będą nadpisywać style przycisków w navbarze, jeśli zostaną zastosowane globalnie. */
+/* Jeśli chcesz, by tylko przyciski w sekcji głównej miały te style, musisz użyć specyfikatorów: QWidget#data_page QPushButton */
+
+QPushButton#btn_load_data, QPushButton#btn_generate_bounds, QPushButton#btn_calculate_stfn, QPushButton#btn_calculate_ranking {
+    background-color: #4A89C9; /* Użycie koloru Navbara jako koloru głównej akcji */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-weight: 600;
+    min-height: 25px;
+}
+
+QPushButton#btn_load_data:hover, QPushButton:hover {
+    background-color: #3c72b0;
+}</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,6">
         <item>
-         <widget class="QWidget" name="data_input_container" native="true">
-          <widget class="QLabel" name="lbl_data_management">
-           <property name="geometry">
-            <rect>
-             <x>60</x>
-             <y>30</y>
-             <width>191</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Data Management</string>
-           </property>
-          </widget>
-          <widget class="QTextEdit" name="txt_data_input">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>90</y>
-             <width>551</width>
-             <height>71</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="btn_load_data">
-           <property name="geometry">
-            <rect>
-             <x>580</x>
-             <y>90</y>
-             <width>171</width>
-             <height>71</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>PushButton</string>
-           </property>
-          </widget>
+         <widget class="QLabel" name="lbl_data_management">
+          <property name="styleSheet">
+           <string notr="true">/*font-size: 24px; font-weight: bold;*/</string>
+          </property>
+          <property name="text">
+           <string>Data Management</string>
+          </property>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="data_table_container" native="true">
-          <widget class="QLabel" name="lbl_data_view">
-           <property name="geometry">
-            <rect>
-             <x>40</x>
-             <y>20</y>
-             <width>47</width>
-             <height>13</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Data</string>
-           </property>
-          </widget>
-          <widget class="QTableView" name="tbl_data_view">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>50</y>
-             <width>751</width>
-             <height>341</height>
-            </rect>
-           </property>
-          </widget>
+         <widget class="QGroupBox" name="data_input_container">
+          <property name="title">
+           <string>Data Import</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QTextEdit" name="txt_data_input">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_load_data">
+             <property name="text">
+              <string>Load Data</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="data_table_container">
+          <property name="title">
+           <string>Data Preview</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QTableWidget" name="tbl_data_view"/>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="stfn_page">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="styleSheet">
+        <string notr="true">/* --- BLOK CSS SKOPIOWANY Z GLOBALNEGO --- */
+
+/* Tło centralnej sekcji powinno być jasne i neutralne */
+/*
+QWidget {
+    background-color: #F8F9FA;
+}
+*/
+
+/* Ogólny styl dla etykiet (Label) */
+QLabel {
+    color: #1b2735; /* Ciemny, czytelny tekst */
+}
+
+/* Styl dla głównego nagłówka strony (np. lbl_data_management) */
+QLabel#lbl_stfn_analysis {
+    font-size: 24px; 
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+/* KONTENERY GRUPUJĄCE (QGroupBox) */
+
+QGroupBox {
+    color: #4A89C9; 
+    font-weight: bold;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    margin-top: 10px; 
+    padding: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    color: #4A89C9; 
+    font-size: 12px;
+}
+
+/* POLA WEJŚCIA DANYCH (QTextEdit, QPlainTextEdit) */
+
+QTextEdit, QPlainTextEdit {
+    background-color: #FFFFFF;
+	color: #1b2735;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    padding: 5px;
+    /* Ograniczenie wysokości dla spójności z przyciskami (domyślny dla Inputów) */
+    max-height: 35px;
+}
+QTextEdit#txt_bounds, QPlainTextEdit#txt_bounds_data {
+    /* Dla pola na Bounds potrzebujemy więcej miejsca */
+    max-height: 70px;
+	color: #1b2735;
+}
+
+/* PRZYCISKI AKCJI (Primary Buttons) */
+
+QPushButton#btn_generate_bounds, QPushButton#btn_calculate_stfn {
+    background-color: #4A89C9;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-weight: 600;
+    min-height: 25px;
+}
+
+QPushButton#btn_generate_bounds:hover, QPushButton#btn_calculate_stfn:hover {
+    background-color: #3c72b0;
+}
+
+/* PRZYCISKI NAWIGACYJNE WIZUALIZACJI (Secondary Buttons) */
+QGroupBox#stfn_visualization_container QPushButton {
+    background-color: #75aadb; /* Łagodniejszy błękit */
+    color: #FFFFFF;
+    border: 1px solid #3c72b0;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-weight: 500;
+    min-height: 20px;
+}
+QGroupBox#stfn_visualization_container QPushButton:hover {
+    background-color: #619bd1;
+}</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
         <item>
-         <widget class="QWidget" name="stfn_title_container" native="true">
-          <widget class="QLabel" name="lbl_stfn_analysis">
-           <property name="geometry">
-            <rect>
-             <x>40</x>
-             <y>30</y>
-             <width>241</width>
-             <height>51</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>STFN Analysis
-</string>
-           </property>
-          </widget>
+         <widget class="QLabel" name="lbl_stfn_analysis">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>STFN Analysis</string>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QWidget" name="stfn_main_container" native="true">
-          <widget class="QWidget" name="stfn_parameters_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>251</width>
-             <height>381</height>
-            </rect>
-           </property>
-           <widget class="QLabel" name="lbl_parameters">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>71</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Parameters</string>
-            </property>
-           </widget>
-           <widget class="QPlainTextEdit" name="plainTextEdit">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>70</y>
-              <width>231</width>
-              <height>71</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_bounds">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>50</y>
-              <width>131</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Bounds for Criteria</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="btn_generate_bounds">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>150</y>
-              <width>231</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Generate Bounds</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_alternatives_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>180</y>
-              <width>161</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Alternatives Ranking</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_population_size">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>280</y>
-              <width>161</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Population Size</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_criteria_weights">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>230</y>
-              <width>161</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Criteria Weights</string>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_alternatives_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>200</y>
-              <width>221</width>
-              <height>21</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_criteria_weights">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>250</y>
-              <width>221</width>
-              <height>21</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_population_size">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>300</y>
-              <width>221</width>
-              <height>21</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="btn_calculate_stfn">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>350</y>
-              <width>231</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Calculate STFN</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="stfn_results_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>270</x>
-             <y>10</y>
-             <width>491</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <widget class="QLabel" name="lbl_stfn_results">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>10</y>
-              <width>71</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Results</string>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_stfn_results">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>30</y>
-              <width>451</width>
-              <height>41</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="stfn_visualization_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>270</x>
-             <y>100</y>
-             <width>491</width>
-             <height>291</height>
-            </rect>
-           </property>
-           <widget class="QGraphicsView" name="gv_stfn_visualization">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>40</y>
-              <width>491</width>
-              <height>251</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_stfn_visualization">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>10</y>
-              <width>71</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Visualization</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="btn_previous_visualization">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>10</y>
-              <width>75</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Previous</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="btn_next_visualization">
-            <property name="geometry">
-             <rect>
-              <x>400</x>
-              <y>10</y>
-              <width>75</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Next</string>
-            </property>
-           </widget>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,3">
+           <item>
+            <widget class="QGroupBox" name="stfn_parameters_container">
+             <property name="title">
+              <string>Parameters</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="QLabel" name="lbl_bounds">
+                <property name="text">
+                 <string>Bounds for Criteria</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPlainTextEdit" name="txt_bounds_data"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btn_generate_bounds">
+                <property name="text">
+                 <string>Generate Bounds</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_alternatives_ranking">
+                <property name="text">
+                 <string>Alternatives Ranking</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_alternatives_ranking"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_criteria_weights">
+                <property name="text">
+                 <string>Criteria Weights</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_criteria_weights"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_population_size">
+                <property name="text">
+                 <string>Population Size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_population_size"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_epoch_size">
+                <property name="text">
+                 <string>Epoch Size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_epoch_size"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_c1_size">
+                <property name="text">
+                 <string>C1 Size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_c1_size"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_c2_size">
+                <property name="text">
+                 <string>C2 Size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_c2_size"/>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_w_size">
+                <property name="text">
+                 <string>W Size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_w_size"/>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btn_calculate_stfn">
+                <property name="text">
+                 <string>Calculate STFN</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="stfn_results_and_vis_wrapper" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,1">
+              <item>
+               <widget class="QGroupBox" name="stfn_results_container">
+                <property name="title">
+                 <string>Results</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QTextEdit" name="txt_stfn_results">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="stfn_visualization_container">
+                <property name="title">
+                 <string>Visualization</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <spacer name="horizontalSpacer_3_left">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_previous_visualization">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Previous</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_next_visualization">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Next</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_3_right">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QGraphicsView" name="gv_stfn_visualization"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="mcda_page">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="styleSheet">
+        <string notr="true">/* --- OGÓLNY KONTEKST DLA STRONY MCDA --- */
+
+/* Ogólny styl dla etykiet (Label) */
+QWidget#mcda_page QLabel {
+    color: #1b2735; /* Ciemny, czytelny tekst */
+}
+
+/* Styl dla głównego nagłówka strony */
+QLabel#lbl_mcda_title {
+    font-size: 24px; 
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+/* --- KONTENERY GRUPUJĄCE (QGroupBox) --- */
+
+QWidget#mcda_page QGroupBox {
+    color: #4A89C9; 
+    font-weight: bold;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    margin-top: 10px; 
+    padding: 10px;
+}
+
+QWidget#mcda_page QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    color: #4A89C9; 
+    font-size: 12px;
+}
+
+/* --- POLA WEJŚCIA DANYCH (QTextEdit i QComboBox) --- */
+
+QWidget#mcda_page QTextEdit {
+    background-color: #FFFFFF;
+	color: #1b2735;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    padding: 5px;
+    /* Ograniczenie wysokości dla spójności */
+    max-height: 35px;
+}
+QWidget#mcda_page QComboBox {
+    background-color: #FFFFFF;
+	color: #1b2735;
+    border: 1px solid #c3cedb;
+    border-radius: 4px;
+    padding: 5px;
+    min-height: 25px;
+}
+
+
+/* --- PRZYCISKI AKCJI (Primary Buttons - np. Calculate Ranking) --- */
+
+QPushButton#btn_calculate_ranking {
+    background-color: #4A89C9;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-weight: 600;
+    min-height: 25px;
+}
+
+QPushButton#btn_calculate_ranking:hover {
+    background-color: #3c72b0;
+}
+
+/* --- PRZYCISKI WIZUALIZACJI (Secondary Buttons - np. Rank Comaprison) --- */
+QGroupBox#mcda_visualization_container QPushButton {
+    background-color: #75aadb; /* Łagodniejszy błękit */
+    color: #FFFFFF;
+    /* Usunięto 1px solid #3c72b0 na rzecz bardziej płaskiego stylu */
+    border: none; 
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-weight: 500;
+    min-height: 20px;
+}
+QGroupBox#mcda_visualization_container QPushButton:hover {
+    background-color: #619bd1;
+}
+QGroupBox#mcda_visualization_container QPushButton:pressed {
+    background-color: #538cc4;
+}</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
         <item>
-         <widget class="QWidget" name="mcda_title_container" native="true">
-          <widget class="QLabel" name="lbl_mcda_title">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>30</y>
-             <width>141</width>
-             <height>21</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>MCDA Methods</string>
-           </property>
-          </widget>
+         <widget class="QLabel" name="lbl_mcda_title">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>MCDA Methods</string>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QWidget" name="mcda_main_container" native="true">
-          <widget class="QWidget" name="mcda_config_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>181</width>
-             <height>381</height>
-            </rect>
-           </property>
-           <widget class="QLabel" name="lbl_mcda_config">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>10</y>
-              <width>131</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Method Configuration
-</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_mcda_methods">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>35</y>
-              <width>101</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>MCDA Method</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="cb_mcda_method">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>80</y>
-              <width>161</width>
-              <height>22</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_criteria_types">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>120</y>
-              <width>151</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Types of criteria</string>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_criteria_types">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>150</y>
-              <width>161</width>
-              <height>21</height>
-             </rect>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="btn_calculate_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>350</y>
-              <width>161</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Calculate Ranking</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="mcda_new_ranking_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>10</y>
-             <width>551</width>
-             <height>51</height>
-            </rect>
-           </property>
-           <widget class="QLabel" name="lbl_new_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>0</y>
-              <width>71</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>New Ranking</string>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_new_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>25</y>
-              <width>531</width>
-              <height>21</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="mcda_old_ranking_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>80</y>
-             <width>551</width>
-             <height>51</height>
-            </rect>
-           </property>
-           <widget class="QLabel" name="lbl_old_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>0</y>
-              <width>81</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Old Ranking</string>
-            </property>
-           </widget>
-           <widget class="QTextEdit" name="txt_old_ranking">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>20</y>
-              <width>531</width>
-              <height>21</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="mcda_visualization_container" native="true">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>140</y>
-             <width>551</width>
-             <height>251</height>
-            </rect>
-           </property>
-           <widget class="QPushButton" name="btn_compare_ranks">
-            <property name="geometry">
-             <rect>
-              <x>320</x>
-              <y>10</y>
-              <width>101</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Rank Comaprison</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="btn_rank_correlation">
-            <property name="geometry">
-             <rect>
-              <x>430</x>
-              <y>10</y>
-              <width>111</width>
-              <height>23</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Rank Corelation</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="lbl_mcda_visualization">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>81</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Visualization</string>
-            </property>
-           </widget>
-           <widget class="QGraphicsView" name="gv_mcda_visualization">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>40</y>
-              <width>531</width>
-              <height>201</height>
-             </rect>
-            </property>
-           </widget>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_4_mcda" stretch="2,3">
+           <item>
+            <widget class="QGroupBox" name="mcda_config_container">
+             <property name="title">
+              <string>Method Configuration</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QLabel" name="lbl_mcda_methods">
+                <property name="text">
+                 <string>MCDA Method</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="cb_mcda_method">
+                <item>
+                 <property name="text">
+                  <string>TOPSIS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>WAPAS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VIKOR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MABAC</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lbl_criteria_types">
+                <property name="text">
+                 <string>Types of criteria</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="txt_criteria_types"/>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btn_calculate_ranking">
+                <property name="text">
+                 <string>Calculate Ranking</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="mcda_results_and_vis_wrapper" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,0,1">
+              <item>
+               <widget class="QGroupBox" name="mcda_new_ranking_container">
+                <property name="title">
+                 <string>New Ranking</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <item>
+                  <widget class="QTextEdit" name="txt_new_ranking">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="mcda_old_ranking_container">
+                <property name="title">
+                 <string>Old Ranking</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <widget class="QTextEdit" name="txt_old_ranking">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="mcda_visualization_container">
+                <property name="title">
+                 <string>Visualization</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <item>
+                    <spacer name="horizontalSpacer_4_left">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_compare_ranks">
+                     <property name="minimumSize">
+                      <size>
+                       <width>120</width>
+                       <height>28</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Rank Comparison</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_rank_correlation">
+                     <property name="minimumSize">
+                      <size>
+                       <width>120</width>
+                       <height>28</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Rank Correlation</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_4_right">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QGraphicsView" name="gv_mcda_visualization"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>

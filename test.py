@@ -1,8 +1,8 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 
-import old_helpers as helpers
-from index_ui import Ui_MainWindow 
+import helpers
+from main_ui import Ui_MainWindow 
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -21,13 +21,18 @@ class MainWindow(QMainWindow):
         self.stfn_plot_index = 0
 
         # actions
-        self.ui.import_data.clicked.connect(self.load_data_handle)
-        self.ui.bounds_gen_btn.clicked.connect(self.make_bounds_handle)
-        self.ui.calc_stfn.clicked.connect(lambda: helpers.calculate_STFN(self))
-        self.ui.calc_mcda.clicked.connect(lambda: helpers.calculate_MCDA(self))
-        self.ui.expert_rank.textChanged.connect(self.change_expert_rank_handle)
-        self.ui.prev_plot_btn_stfn.clicked.connect(self.show_prev_stfn_plot)
-        self.ui.next_plot_btn_stfn.clicked.connect(self.show_next_stfn_plot)              
+        self.ui.btn_load_data.clicked.connect(self.load_data_handle)
+        self.ui.btn_generate_bounds.clicked.connect(self.make_bounds_handle)
+        self.ui.btn_calculate_stfn.clicked.connect(lambda: helpers.calculate_STFN(self))
+        self.ui.btn_calculate_ranking.clicked.connect(lambda: helpers.calculate_MCDA(self))
+        self.ui.txt_alternatives_ranking.textChanged.connect(self.change_expert_rank_handle)
+        self.ui.btn_previous_visualization.clicked.connect(self.show_prev_stfn_plot)
+        self.ui.btn_next_visualization.clicked.connect(self.show_next_stfn_plot)      
+
+        # switching pages
+        self.ui.btn_data_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.data_page))
+        self.ui.btn_stfn_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.stfn_page))
+        self.ui.btn_mcda_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.mcda_page))
 
 
     def load_data_handle(self):
@@ -38,7 +43,7 @@ class MainWindow(QMainWindow):
 
         if dialog_successful:
             selected_file = dialog.selectedFiles()[0]
-            self.ui.file_path.setText(selected_file)
+            self.ui.txt_data_input.setText(selected_file)
             helpers.load_data(self, selected_file)
         else:
             print("File selection canceled")
@@ -54,11 +59,11 @@ class MainWindow(QMainWindow):
             return
         self.bounds = helpers.make_bounds(self.data_matrix)
         formatted = ', '.join(f'({x}, {y})' for x, y in self.bounds)
-        self.ui.bounds_data.setPlainText(formatted)
+        self.ui.txt_bounds_data.setPlainText(formatted)
 
     def change_expert_rank_handle(self):
-        expert_rank = self.ui.expert_rank.text()
-        self.ui.ranking_old.setPlainText(expert_rank)
+        txt_alternatives_ranking = self.ui.txt_alternatives_ranking.toPlainText()
+        self.ui.txt_old_ranking.setPlainText(txt_alternatives_ranking)
 
     def show_prev_stfn_plot(self):
         if self.stfn_plot_data:
@@ -69,7 +74,6 @@ class MainWindow(QMainWindow):
         if self.stfn_plot_data:
             index = (self.stfn_plot_index + 1) % len(self.stfn_plot_data)
             helpers.show_stfn_plot(self, index)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
