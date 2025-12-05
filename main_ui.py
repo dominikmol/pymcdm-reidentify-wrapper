@@ -362,13 +362,23 @@ class Ui_MainWindow(object):
 "    border-radius: 4px;\n"
 "    padding: 5px;\n"
 "    /* Ograniczenie wysoko\u015bci dla sp\u00f3jno\u015bci z przyciskami (domy\u015blny dla Input\u00f3w) */\n"
-"    max-height: 35px;\n"
+"    max-height: 30px;\n"
 "}\n"
 "QTextEdit#txt_bounds, QPlainTextEdit#txt_bounds_data {\n"
 "    /* Dla pola na Bounds potrzebujemy wi\u0119cej miejsca */\n"
 "    max-height: 70px;\n"
 "	color: #1b2735;\n"
 "}\n"
+"\n"
+"QWidget#stfn_page QComboBox {\n"
+"    background-color: #FFFFFF;\n"
+"	color: #1b2735;\n"
+"    border: 1px solid #c3cedb;\n"
+"    border-radius: 4px;\n"
+"    padding: 5px;\n"
+"    min-height: 25px;\n"
+"}\n"
+"\n"
 "\n"
 "/* PRZYCISKI AKCJI (Primary Buttons) */\n"
 "\n"
@@ -379,7 +389,8 @@ class Ui_MainWindow(object):
 "    border-radius: 4px;\n"
 "    padding: 8px 15px;\n"
 "    font-weight: 600;\n"
-"    min-height: 25px;\n"
+"    min-height: 25px;"
+                        "\n"
 "}\n"
 "\n"
 "QPushButton#btn_generate_bounds:hover, QPushButton#btn_calculate_stfn:hover {\n"
@@ -387,8 +398,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "/* PRZYCISKI NAWIGACYJNE WIZUALIZACJI (Secondary Buttons) */\n"
-"QGroupBo"
-                        "x#stfn_visualization_container QPushButton {\n"
+"QGroupBox#stfn_visualization_container QPushButton {\n"
 "    background-color: #75aadb; /* \u0141agodniejszy b\u0142\u0119kit */\n"
 "    color: #FFFFFF;\n"
 "    border: 1px solid #3c72b0;\n"
@@ -440,6 +450,20 @@ class Ui_MainWindow(object):
         self.txt_alternatives_ranking.setObjectName(u"txt_alternatives_ranking")
 
         self.verticalLayout_6.addWidget(self.txt_alternatives_ranking)
+
+        self.label = QLabel(self.stfn_parameters_container)
+        self.label.setObjectName(u"label")
+
+        self.verticalLayout_6.addWidget(self.label)
+
+        self.cb_mcda_method = QComboBox(self.stfn_parameters_container)
+        self.cb_mcda_method.addItem("")
+        self.cb_mcda_method.addItem("")
+        self.cb_mcda_method.addItem("")
+        self.cb_mcda_method.addItem("")
+        self.cb_mcda_method.setObjectName(u"cb_mcda_method")
+
+        self.verticalLayout_6.addWidget(self.cb_mcda_method)
 
         self.lbl_criteria_weights = QLabel(self.stfn_parameters_container)
         self.lbl_criteria_weights.setObjectName(u"lbl_criteria_weights")
@@ -683,45 +707,64 @@ class Ui_MainWindow(object):
         self.mcda_main_container.setObjectName(u"mcda_main_container")
         self.horizontalLayout_4_mcda = QHBoxLayout(self.mcda_main_container)
         self.horizontalLayout_4_mcda.setObjectName(u"horizontalLayout_4_mcda")
-        self.mcda_config_container = QGroupBox(self.mcda_main_container)
-        self.mcda_config_container.setObjectName(u"mcda_config_container")
-        self.verticalLayout_9 = QVBoxLayout(self.mcda_config_container)
+        self.mcda_config_and_vis_wrapper = QWidget(self.mcda_main_container)
+        self.mcda_config_and_vis_wrapper.setObjectName(u"mcda_config_and_vis_wrapper")
+        self.verticalLayout_9 = QVBoxLayout(self.mcda_config_and_vis_wrapper)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.mcda_config_container = QGroupBox(self.mcda_config_and_vis_wrapper)
+        self.mcda_config_container.setObjectName(u"mcda_config_container")
+        self.verticalLayout_MethodConfig = QVBoxLayout(self.mcda_config_container)
+        self.verticalLayout_MethodConfig.setObjectName(u"verticalLayout_MethodConfig")
         self.lbl_mcda_methods = QLabel(self.mcda_config_container)
         self.lbl_mcda_methods.setObjectName(u"lbl_mcda_methods")
 
-        self.verticalLayout_9.addWidget(self.lbl_mcda_methods)
+        self.verticalLayout_MethodConfig.addWidget(self.lbl_mcda_methods)
 
-        self.cb_mcda_method = QComboBox(self.mcda_config_container)
-        self.cb_mcda_method.addItem("")
-        self.cb_mcda_method.addItem("")
-        self.cb_mcda_method.addItem("")
-        self.cb_mcda_method.addItem("")
-        self.cb_mcda_method.setObjectName(u"cb_mcda_method")
+        self.txt_mcda_method = QTextEdit(self.mcda_config_container)
+        self.txt_mcda_method.setObjectName(u"txt_mcda_method")
+        self.txt_mcda_method.setReadOnly(True)
 
-        self.verticalLayout_9.addWidget(self.cb_mcda_method)
+        self.verticalLayout_MethodConfig.addWidget(self.txt_mcda_method)
 
-        self.lbl_criteria_types = QLabel(self.mcda_config_container)
-        self.lbl_criteria_types.setObjectName(u"lbl_criteria_types")
+        self.lbl_weights_mcda = QLabel(self.mcda_config_container)
+        self.lbl_weights_mcda.setObjectName(u"lbl_weights_mcda")
 
-        self.verticalLayout_9.addWidget(self.lbl_criteria_types)
+        self.verticalLayout_MethodConfig.addWidget(self.lbl_weights_mcda)
 
-        self.txt_criteria_types = QTextEdit(self.mcda_config_container)
-        self.txt_criteria_types.setObjectName(u"txt_criteria_types")
+        self.txt_weights_mcda = QTextEdit(self.mcda_config_container)
+        self.txt_weights_mcda.setObjectName(u"txt_weights_mcda")
+        self.txt_weights_mcda.setReadOnly(True)
 
-        self.verticalLayout_9.addWidget(self.txt_criteria_types)
+        self.verticalLayout_MethodConfig.addWidget(self.txt_weights_mcda)
 
         self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.verticalLayout_9.addItem(self.verticalSpacer_4)
+        self.verticalLayout_MethodConfig.addItem(self.verticalSpacer_4)
 
         self.btn_calculate_ranking = QPushButton(self.mcda_config_container)
         self.btn_calculate_ranking.setObjectName(u"btn_calculate_ranking")
 
-        self.verticalLayout_9.addWidget(self.btn_calculate_ranking)
+        self.verticalLayout_MethodConfig.addWidget(self.btn_calculate_ranking)
 
 
-        self.horizontalLayout_4_mcda.addWidget(self.mcda_config_container)
+        self.verticalLayout_9.addWidget(self.mcda_config_container)
+
+        self.mcda_correlatio_container = QGroupBox(self.mcda_config_and_vis_wrapper)
+        self.mcda_correlatio_container.setObjectName(u"mcda_correlatio_container")
+        self.verticalLayout_CorrelationVis = QVBoxLayout(self.mcda_correlatio_container)
+        self.verticalLayout_CorrelationVis.setObjectName(u"verticalLayout_CorrelationVis")
+        self.gv_correlation_visualization = QGraphicsView(self.mcda_correlatio_container)
+        self.gv_correlation_visualization.setObjectName(u"gv_correlation_visualization")
+
+        self.verticalLayout_CorrelationVis.addWidget(self.gv_correlation_visualization)
+
+
+        self.verticalLayout_9.addWidget(self.mcda_correlatio_container)
+
+        self.verticalLayout_9.setStretch(0, 2)
+        self.verticalLayout_9.setStretch(1, 4)
+
+        self.horizontalLayout_4_mcda.addWidget(self.mcda_config_and_vis_wrapper)
 
         self.mcda_results_and_vis_wrapper = QWidget(self.mcda_main_container)
         self.mcda_results_and_vis_wrapper.setObjectName(u"mcda_results_and_vis_wrapper")
@@ -757,31 +800,6 @@ class Ui_MainWindow(object):
         self.mcda_visualization_container.setObjectName(u"mcda_visualization_container")
         self.verticalLayout_11 = QVBoxLayout(self.mcda_visualization_container)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.horizontalLayout_9 = QHBoxLayout()
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.horizontalSpacer_4_left = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_9.addItem(self.horizontalSpacer_4_left)
-
-        self.btn_compare_ranks = QPushButton(self.mcda_visualization_container)
-        self.btn_compare_ranks.setObjectName(u"btn_compare_ranks")
-        self.btn_compare_ranks.setMinimumSize(QSize(120, 28))
-
-        self.horizontalLayout_9.addWidget(self.btn_compare_ranks)
-
-        self.btn_rank_correlation = QPushButton(self.mcda_visualization_container)
-        self.btn_rank_correlation.setObjectName(u"btn_rank_correlation")
-        self.btn_rank_correlation.setMinimumSize(QSize(120, 28))
-
-        self.horizontalLayout_9.addWidget(self.btn_rank_correlation)
-
-        self.horizontalSpacer_4_right = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_9.addItem(self.horizontalSpacer_4_right)
-
-
-        self.verticalLayout_11.addLayout(self.horizontalLayout_9)
-
         self.gv_mcda_visualization = QGraphicsView(self.mcda_visualization_container)
         self.gv_mcda_visualization.setObjectName(u"gv_mcda_visualization")
 
@@ -790,12 +808,14 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_10.addWidget(self.mcda_visualization_container)
 
-        self.verticalLayout_10.setStretch(2, 1)
+        self.verticalLayout_10.setStretch(0, 1)
+        self.verticalLayout_10.setStretch(1, 1)
+        self.verticalLayout_10.setStretch(2, 4)
 
         self.horizontalLayout_4_mcda.addWidget(self.mcda_results_and_vis_wrapper)
 
-        self.horizontalLayout_4_mcda.setStretch(0, 2)
-        self.horizontalLayout_4_mcda.setStretch(1, 3)
+        self.horizontalLayout_4_mcda.setStretch(0, 1)
+        self.horizontalLayout_4_mcda.setStretch(1, 1)
 
         self.verticalLayout_4.addWidget(self.mcda_main_container)
 
@@ -830,12 +850,43 @@ class Ui_MainWindow(object):
         self.lbl_bounds.setText(QCoreApplication.translate("MainWindow", u"Bounds for Criteria", None))
         self.btn_generate_bounds.setText(QCoreApplication.translate("MainWindow", u"Generate Bounds", None))
         self.lbl_alternatives_ranking.setText(QCoreApplication.translate("MainWindow", u"Alternatives Ranking", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"MCDA Method", None))
+        self.cb_mcda_method.setItemText(0, QCoreApplication.translate("MainWindow", u"TOPSIS", None))
+        self.cb_mcda_method.setItemText(1, QCoreApplication.translate("MainWindow", u"VIKOR", None))
+        self.cb_mcda_method.setItemText(2, QCoreApplication.translate("MainWindow", u"WASPAS", None))
+        self.cb_mcda_method.setItemText(3, QCoreApplication.translate("MainWindow", u"MABAC", None))
+
         self.lbl_criteria_weights.setText(QCoreApplication.translate("MainWindow", u"Criteria Weights", None))
         self.lbl_population_size.setText(QCoreApplication.translate("MainWindow", u"Population Size", None))
+        self.txt_population_size.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">100</p></body></html>", None))
         self.lbl_epoch_size.setText(QCoreApplication.translate("MainWindow", u"Epoch Size", None))
-        self.lbl_c1_size.setText(QCoreApplication.translate("MainWindow", u"C1 Size", None))
-        self.lbl_c2_size.setText(QCoreApplication.translate("MainWindow", u"C2 Size", None))
-        self.lbl_w_size.setText(QCoreApplication.translate("MainWindow", u"W Size", None))
+        self.txt_epoch_size.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1000</p></body></html>", None))
+        self.lbl_c1_size.setText(QCoreApplication.translate("MainWindow", u"Local coefficient", None))
+        self.txt_c1_size.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">2.05</p></body></html>", None))
+        self.lbl_c2_size.setText(QCoreApplication.translate("MainWindow", u"Global coefficient", None))
+        self.txt_c2_size.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">2.05</p></body></html>", None))
+        self.lbl_w_size.setText(QCoreApplication.translate("MainWindow", u"Weight min of bird", None))
+        self.txt_w_size.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">0.4</p></body></html>", None))
         self.btn_calculate_stfn.setText(QCoreApplication.translate("MainWindow", u"Calculate STFN", None))
         self.stfn_results_container.setTitle(QCoreApplication.translate("MainWindow", u"Results", None))
         self.stfn_visualization_container.setTitle(QCoreApplication.translate("MainWindow", u"Visualization", None))
@@ -844,17 +895,11 @@ class Ui_MainWindow(object):
         self.lbl_mcda_title.setText(QCoreApplication.translate("MainWindow", u"MCDA Methods", None))
         self.mcda_config_container.setTitle(QCoreApplication.translate("MainWindow", u"Method Configuration", None))
         self.lbl_mcda_methods.setText(QCoreApplication.translate("MainWindow", u"MCDA Method", None))
-        self.cb_mcda_method.setItemText(0, QCoreApplication.translate("MainWindow", u"TOPSIS", None))
-        self.cb_mcda_method.setItemText(1, QCoreApplication.translate("MainWindow", u"WAPAS", None))
-        self.cb_mcda_method.setItemText(2, QCoreApplication.translate("MainWindow", u"VIKOR", None))
-        self.cb_mcda_method.setItemText(3, QCoreApplication.translate("MainWindow", u"MABAC", None))
-
-        self.lbl_criteria_types.setText(QCoreApplication.translate("MainWindow", u"Types of criteria", None))
+        self.lbl_weights_mcda.setText(QCoreApplication.translate("MainWindow", u"Criteria Weights", None))
         self.btn_calculate_ranking.setText(QCoreApplication.translate("MainWindow", u"Calculate Ranking", None))
+        self.mcda_correlatio_container.setTitle(QCoreApplication.translate("MainWindow", u"Correlation Visualization", None))
         self.mcda_new_ranking_container.setTitle(QCoreApplication.translate("MainWindow", u"New Ranking", None))
         self.mcda_old_ranking_container.setTitle(QCoreApplication.translate("MainWindow", u"Old Ranking", None))
-        self.mcda_visualization_container.setTitle(QCoreApplication.translate("MainWindow", u"Visualization", None))
-        self.btn_compare_ranks.setText(QCoreApplication.translate("MainWindow", u"Rank Comparison", None))
-        self.btn_rank_correlation.setText(QCoreApplication.translate("MainWindow", u"Rank Correlation", None))
+        self.mcda_visualization_container.setTitle(QCoreApplication.translate("MainWindow", u"Rank Comparison Visualization", None))
     # retranslateUi
 

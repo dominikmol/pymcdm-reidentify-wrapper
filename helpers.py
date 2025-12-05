@@ -118,32 +118,65 @@ def calculate_STFN(app):
     app.stfn_plot_index = 0
 
     bounds = app.bounds
-    weights = np.array([float(x.strip()) for x in app.ui.txt_criteria_weights.toPlainText().split(',')])
+    weights_txt = app.ui.txt_criteria_weights.toPlainText()
+    weights = np.array([float(x.strip()) for x in weights_txt.split(',')])
+    app.weights = weights
     epoch = int(app.ui.txt_epoch_size.toPlainText())
     pop_size = int(app.ui.txt_population_size.toPlainText())
     c1 = float(app.ui.txt_c1_size.toPlainText())
     c2 = float(app.ui.txt_c2_size.toPlainText())
     w = float(app.ui.txt_w_size.toPlainText())
-    expert_rank = np.array([int(x.strip()) for x in app.ui.txt_alternatives_ranking.toPlainText().split(',')])
+    expert_rank_txt = app.ui.txt_alternatives_ranking.toPlainText()
+    expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(',')])
+    app.expert_rank = expert_rank
 
     stoch = OriginalPSO(epoch=epoch, pop_size=pop_size, c1=c1, c2=c2, w=w)
     print(f"expert rank: {expert_rank}")
     print(f"data matrix: {app.data_matrix}")
     print(f"bounds: {bounds}")
 
-    stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
+    method = app.ui.cb_mcda_method.currentText()
+    app.mcda_method = method
+
+    if method == "TOPSIS":
+        print(method)
+        stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
+    elif method == "VIKOR":
+        stfn = STFN(stoch.solve, VIKOR(), bounds, weights)
+        print(method)
+    elif method == "WASPAS":
+        stfn = STFN(stoch.solve, WASPAS(), bounds, weights)
+        print(method)
+    elif method == "MABAC":
+        stfn = STFN(stoch.solve, MABAC(), bounds, weights)
+        print(method)
+    else:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText("Error")
+        msg.setInformativeText('Make sure MCDA method is selected.')
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+
+    # stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
     stfn.fit(app.data_matrix, expert_rank, log_to=None)
     app.stfn = stfn
     print(f"cores: {stfn.cores}")
     
     app.ui.txt_stfn_results.setPlainText(f"STFN cores: {stfn.cores}")
 
+    # text_expert_rank
+    app.ui.txt_old_ranking.setPlainText(expert_rank_txt)
+    app.ui.txt_weights_mcda.setPlainText(weights_txt)
+    app.ui.txt_mcda_method.setPlainText(method)
+
     for i, (fun, a, m, b) in enumerate(zip(stfn(), stfn.lb, stfn.cores, stfn.ub), 1):
         app.stfn_plot_data.append((fun, a, m, b, i))
     show_stfn_plot(app, 0)
 
 
-def show_mcda_plot_rank(app, expert_rank, rank, method):
+def show_mcda_rank_plot(app, expert_rank, rank, method):
     # Clear previous scene if exists
     scene = app.ui.gv_mcda_visualization.scene()
     if scene is None:
@@ -178,12 +211,57 @@ def show_mcda_plot_rank(app, expert_rank, rank, method):
     app.ui.gv_mcda_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
     # plt.show()
 
+def rw(rankx, ranky, n):
+    suma = 0
+    for i in range(n):
+        suma += ((
+            (rankx[i]-ranky[i])**2)
+            *((n-rankx[i]+1)+(n-ranky[i]+1)
+                    ))
+    suma = 6 * suma
+    denominator = n**4 + n**3 - n**2 - n
+    if denominator == 0:
+        return 0
+    suma = suma / denominator
+    return 1-suma
+
+def WS(rankx, ranky, n):
+    suma = 0
+    for i in range(n):
+        eq = 2 ** (-float(rankx[i]))
+        eq2 = abs(rankx[i] - ranky[i]) / max(abs(1 - rankx[i]), abs(n - rankx[i]))
+        suma += eq * eq2
+    return 1 - suma
+
+def show_mcda_corelation_plot(app, expert_rank, rank, method):
+    # Clear previous scene if exists
+    scene = app.ui.gv_correlation_visualization.scene()
+    if scene is None:
+        scene = QGraphicsScene()
+        app.ui.gv_correlation_visualization.setScene(scene)
+    else:
+        scene.clear()
+
+    fig, ax = plt.subplots(figsize=(8, 4), dpi=300, tight_layout=True)
+    # Create bar plot with bars next to each other
+    x = np.arange(len(rank))
+    ax.scatter(expert_rank, rank, color='black')
+    ax.grid(True, linestyle=':')
+    ax.set_xlabel("expert rank")
+    ax.set_ylabel(f"{method} rank")
+    n = len(rank)
+    ax.set_title(
+        f"rw = {rw(expert_rank, rank, n):.5f}\n WS = {WS(expert_rank, rank, n):.5f}"
+        )
+    canvas = FigureCanvas(fig)
+    scene.addWidget(canvas)
+    app.ui.gv_correlation_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+    # plt.show()
+
 def calculate_MCDA(app):
     print("-----------------------------------------")
     print("calculateMCDA")
     app.ui.txt_new_ranking.clear()
-
-    method = app.ui.cb_mcda_method.currentText()
     if app.stfn is None:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
@@ -194,17 +272,20 @@ def calculate_MCDA(app):
         return
     body = None
 
+    method = app.mcda_method
+    ob_norm = FuzzyNormalization(app.stfn())
+
     if method == "TOPSIS":
         print(method)
-        body = TOPSIS(FuzzyNormalization(app.stfn()))
+        body = TOPSIS(ob_norm)
     elif method == "VIKOR":
-        body = VIKOR(FuzzyNormalization(app.stfn()))
+        body = VIKOR(ob_norm)
         print(method)
     elif method == "WASPAS":
-        body = WASPAS(FuzzyNormalization(app.stfn()))
+        body = WASPAS(ob_norm)
         print(method)
     elif method == "MABAC":
-        body = MABAC(FuzzyNormalization(app.stfn()))
+        body = MABAC(ob_norm)
         print(method)
     
     if body is None:
@@ -217,16 +298,25 @@ def calculate_MCDA(app):
         return
 
     
-    types = np.array([int(x.strip()) for x in app.ui.txt_criteria_types.text().split(',')])
-    weights = np.array([float(x.strip()) for x in app.ui.txt_criteria_weights.text().split(',')])
+    # types = np.array([int(x.strip()) for x in app.ui.txt_criteria_types.toPlainText().split(',')])
+    types = np.ones(app.data_matrix.shape[1])
+    print(f"MCDA TYPES: {types}")
+    weights = app.weights
+    print(f"MCDA weights: {weights}")
+    # weights = np.array([float(x.strip()) for x in app.ui.txt_criteria_weights.toPlainText().split(',')])
 
     pref = body(app.data_matrix, weights, types)
     rank = body.rank(pref)
-    expert_rank = np.array([int(x.strip()) for x in app.ui.txt_alternatives_ranking.text().split(',')])
+    expert_rank = app.expert_rank
+    # expert_rank = np.array([int(x.strip()) for x in app.ui.txt_alternatives_ranking.toPlainText().split(',')])
     
-    app.ui.txt_new_ranking.setPlainText(
-        f"{method} result: {rank}\n"
-    )
+    print(f"expert_rank : {expert_rank}")
+    print(f"new rank: {rank}")
+
+    new_rank_txt = np.array2string(rank, separator=', ')[1:-1]
+
+    app.new_rank = rank
+    app.ui.txt_new_ranking.setPlainText(new_rank_txt)
 
     
     print(f"types: {types}")
@@ -236,4 +326,5 @@ def calculate_MCDA(app):
     print("app.data_matrix shape:", app.data_matrix.shape)
     print(len(weights), len(types), len(app.bounds))
 
-    show_mcda_plot_rank(app, expert_rank, rank, method)
+    show_mcda_rank_plot(app, expert_rank, rank, method)
+    show_mcda_corelation_plot(app, expert_rank, rank, method)
