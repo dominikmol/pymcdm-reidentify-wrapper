@@ -1,3 +1,5 @@
 # pymcdm-reidentify-wrapper
 
-work in progress
+GUI wrapper for [pymcdm-reidentify](https://github.com/kiziebar/pymcdm-reidentify) Library
+
+### work in progress
