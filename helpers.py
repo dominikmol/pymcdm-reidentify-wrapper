@@ -116,8 +116,9 @@ def calculate_STFN(app):
     app.ui.txt_stfn_results.clear()
     app.stfn_plot_data = []
     app.stfn_plot_index = 0
-
+    
     bounds = app.bounds
+    
     weights_txt = app.ui.txt_criteria_weights.toPlainText()
     weights = np.array([float(x.strip()) for x in weights_txt.split(',')])
     app.weights = weights
