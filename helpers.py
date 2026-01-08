@@ -8,29 +8,51 @@ from PySide6.QtWidgets import QTableWidgetItem, QGraphicsScene, QMessageBox
 from PySide6.QtCore import Qt
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+import os
+
+np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
 def load_data(app, file_loc):
-    data = pd.read_csv(file_loc)
-    if data.size == 0:
+    _, extension = os.path.splitext(file_loc)
+    extension = extension.lower()
+
+    try:
+        if extension == '.csv' or extension == '.txt':
+            data = pd.read_csv(file_loc)
+        elif extension == '.xlsx' or extension == '.xls':
+            data = pd.read_excel(file_loc)
+        else:
+            raise ValueError("Unsupported file format")
+
+        if data.size == 0:
+            return
+
+        app.data = data
+        app.data_matrix = data.iloc[:, 1:].to_numpy()
+        full_matrix = data.to_numpy()
+        field_names = list(data.columns)
+
+        # table = app.ui.data_table
+        table = app.ui.tbl_data_view
+        table.clear()
+        table.setRowCount(full_matrix.shape[0])
+        table.setColumnCount(full_matrix.shape[1])
+        table.verticalHeader().setVisible(False)
+        table.setHorizontalHeaderLabels(field_names)
+
+        for row in range(full_matrix.shape[0]):
+            for col in range(full_matrix.shape[1]):
+                item = QTableWidgetItem(str(full_matrix[row][col]))
+                table.setItem(row, col, item)
+
+    except Exception as e:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText("Error")
+        msg.setInformativeText(f'Failed to load data: {str(e)}')
+        msg.setWindowTitle("Error")
+        msg.exec()
         return
-
-    app.data = data
-    app.data_matrix = data.iloc[:, 1:].to_numpy()
-    full_matrix = data.to_numpy()
-    field_names = list(data.columns)
-
-    # table = app.ui.data_table
-    table = app.ui.tbl_data_view
-    table.clear()
-    table.setRowCount(full_matrix.shape[0])
-    table.setColumnCount(full_matrix.shape[1])
-    table.verticalHeader().setVisible(False)
-    table.setHorizontalHeaderLabels(field_names)
-
-    for row in range(full_matrix.shape[0]):
-        for col in range(full_matrix.shape[1]):
-            item = QTableWidgetItem(str(full_matrix[row][col]))
-            table.setItem(row, col, item)
             
 
 def make_bounds(data_matrix):

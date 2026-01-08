@@ -28,7 +28,6 @@ class MainWindow(QMainWindow):
         self.ui.btn_generate_bounds.clicked.connect(self.make_bounds_handle)
         self.ui.btn_calculate_stfn.clicked.connect(lambda: helpers.calculate_STFN(self))
         self.ui.btn_calculate_ranking.clicked.connect(lambda: helpers.calculate_MCDA(self))
-        # self.ui.txt_alternatives_ranking.textChanged.connect(self.change_expert_rank_handle)
         self.ui.btn_previous_visualization.clicked.connect(self.show_prev_stfn_plot)
         self.ui.btn_next_visualization.clicked.connect(self.show_next_stfn_plot)      
 
@@ -40,7 +39,8 @@ class MainWindow(QMainWindow):
 
     def load_data_handle(self):
         dialog = QFileDialog()
-        dialog.setNameFilter("Data File (*.csv)")
+        filters = "All Supported Files (*.csv *.txt *.xlsx *.xls);;CSV Files (*.csv);;Text Files (*.txt);;Excel Files (*.xlsx *.xls)"
+        dialog.setNameFilter(filters)
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         dialog_successful = dialog.exec()
 
