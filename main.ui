@@ -6,22 +6,111 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>850</height>
+    <width>1440</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1200</width>
-    <height>850</height>
+    <width>1000</width>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMainWindow {
-	background-color: #EEEEEE;
+   <string notr="true">/* SIDEBAR AND NAVIGATION */
+QWidget#nav {
+    background-color: #4A89C9;
+    border-right: 1px solid #3c72b0;
+}
+
+QLabel#lbl_app_title {
+    color: #FFFFFF;
+    font-size: 17px;
+    font-weight: 700;
+    padding: 16px 10px;
+}
+
+QWidget#nav QPushButton {
+    background-color: #75aadb;
+    color: #FFFFFF;
+    border: 2px solid #3c72b0;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 40px;
+    min-width: 200px;
+}
+
+/* HEADERS AND PRIMARY BUTTONS */
+QLabel#lbl_data_management, 
+QLabel#lbl_stfn_analysis, 
+QLabel#lbl_mcda_title {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+QPushButton#btn_load_data, 
+QPushButton#btn_generate_bounds, 
+QPushButton#btn_calculate_stfn, 
+QPushButton#btn_calculate_ranking {
+    background-color: #4A89C9;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-weight: 600;
+    min-height: 25px;
+}
+
+QPushButton:hover {
+    background-color: #3c72b0;
+}
+
+/* CONTAINERS AND ACCENT BORDERS */
+QGroupBox {
+    color: #4A89C9;
+    font-weight: bold;
+    border: 1px solid #4A89C9;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+}
+
+/* INPUTS, TABLES AND DYNAMIC THEME (SYSTEM COLORS) */
+QTextEdit, QPlainTextEdit, QComboBox, QTableWidget, QGraphicsView {
+    border: 1px solid #4A89C9;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QHeaderView::section {
+    padding: 4px;
+    border: 1px solid #4A89C9;
+    font-weight: 600;
+}
+
+/* COMPONENT HEIGHT ADJUSTMENTS */
+QTextEdit, QComboBox {
+    max-height: 35px;
+    min-height: 25px;
+}
+
+QTextEdit#txt_stfn_results, 
+QTextEdit#txt_new_ranking, 
+QTextEdit#txt_old_ranking,
+QPlainTextEdit#txt_bounds_data {
+    max-height: none;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -65,70 +154,7 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">QWidget#nav {
-    /* Ulepszenie: Średnio ciemny, profesjonalny błękit - idealna równowaga */
-    background-color: #4A89C9; 
-    /* Subtelna linia dla wydzielenia Navbara */
-    border-right: 1px solid #3c72b0;
-}
-
-/* Tytuł aplikacji */
-QLabel#lbl_app_title {
-    /* Biały tekst dla maksymalnej czytelności */
-    color: #FFFFFF; 
-    font-size: 17px;
-    font-weight: 700;
-    padding: 16px 10px;
-    text-align: center;
-}
-
-/* Przyciski w nawigacji */
-QPushButton {
-    /* Ulepszenie: Stonowany błękit (#75aadb) jako przycisk normalny */
-    background-color: #75aadb;
-    /* Biały tekst na niebieskim przycisku */
-    color: #FFFFFF;
-    border: 2px solid #3c72b0;
-    border-radius: 6px;
-	margin-bottom: 6px;
-    /*padding: 10px 12px;
-    margin: 6px 12px;*/
-    text-align: center; 
-    font-size: 13px;
-    font-weight: 500;
-    min-height: 40px;
-    min-width: 200px;
-}
-
-/* Hover - subtelne przyciemnienie */
-QPushButton:hover {
-    /* Lekkie przyciemnienie przycisku */
-    background-color: #619bd1;
-    border: none;
-}
-
-/* Kliknięty / aktywny */
-QPushButton:pressed {
-    /* Efekt wciśnięcia */
-    background-color: #538cc4;
-    border: none;
-}
-
-/* Zaznaczony przycisk (np. aktualna strona) */
-QPushButton:checked {
-    /* Ulepszenie: Czysty, wyrazisty błękit (#5B9ADF) dla aktywnej strony */
-    background-color: #5B9ADF; 
-    /* Dajemy ciemniejszą ramkę dla odróżnienia */
-    border: 1px solid #3c72b0; 
-    color: #FFFFFF;
-    font-weight: 700;
-}
-
-/* Dodatkowe wyrównanie i przestrzeń */
-QVBoxLayout, QHBoxLayout {
-    spacing: 8px;
-    margin: 0;
-}</string>
+       <string notr="true"/>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -243,105 +269,7 @@ QVBoxLayout, QHBoxLayout {
       </property>
       <widget class="QWidget" name="data_page">
        <property name="styleSheet">
-        <string notr="true">/* --- OGÓLNE STYLI DLA TŁA --- */
-
-/* Tło centralnej sekcji powinno być jasne i neutralne */
-QWidget#centralwidget {
-    background-color: #F8F9FA; /* Bardzo jasny szary/biały */
-}
-
-/* --- NAGŁÓWKI I TEKST --- */
-
-/* Ogólny styl dla etykiet (Label) */
-QLabel {
-    color: #1b2735; /* Ciemny, czytelny tekst */
-}
-
-/* Styl dla głównego nagłówka strony (np. lbl_data_management) */
-QLabel#lbl_data_management {
-    /*color: #1b2735;*/
-    font-size: 24px; 
-    font-weight: bold;
-    padding: 10px 0;
-}
-
-/* --- KONTENERY GRUPUJĄCE (QGroupBox) --- */
-
-QGroupBox {
-    /* Użycie koloru Navbara (#4A89C9) dla tytułu grupy, aby zachować spójność */
-    color: #4A89C9; 
-    font-weight: bold;
-    border: 1px solid #c3cedb; /* Subtelna, jasnoszara ramka */
-    border-radius: 4px;
-    margin-top: 10px; 
-    padding: 10px;
-}
-
-QGroupBox::title {
-    /* Stylizacja tytułu grupy */
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 0 5px;
-    color: #4A89C9; 
-    font-size: 12px;
-}
-
-QTextEdit {
-    background-color: #FFFFFF;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    padding: 5px;
-}
-
-/* KOREKTA: Ograniczenie wysokości pola tekstowego do wyświetlania ścieżki pliku */
-QTextEdit#txt_data_input {
-    min-height: 25px; 
-    max-height: 35px; /* Nadaje stałą, małą wysokość */
-}
-
-/* --- WIDŻET TABELI (QTableWidget) --- */
-
-QTableWidget {
-    background-color: #FFFFFF;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    gridline-color: #e5e5e5; /* Bardzo jasne linie siatki */
-    /* KLUCZOWA POPRAWKA: Ustawienie koloru tekstu dla całej tabeli */
-    color: #1b2735; 
-}
-
-/* Nagłówki kolumn w tabeli */
-
-QHeaderView {
-    /* Ustaw tło całego nagłówka na jasne, takie jak tło sekcji lub kontenera */
-    background-color: #EFEFEF; 
-}
-
-QHeaderView::section {
-    background-color: #EFEFEF; /* Jasnoszare tło nagłówków */
-    color: #1b2735;
-    padding: 4px;
-    border: 1px solid #c3cedb;
-    font-weight: 600;
-}
-
-/* --- OGÓLNE PRZYCISKI (Przycisk w grupie danych, np. btn_load_data) --- */
-/* Uwaga: Te style będą nadpisywać style przycisków w navbarze, jeśli zostaną zastosowane globalnie. */
-/* Jeśli chcesz, by tylko przyciski w sekcji głównej miały te style, musisz użyć specyfikatorów: QWidget#data_page QPushButton */
-
-QPushButton#btn_load_data, QPushButton#btn_generate_bounds, QPushButton#btn_calculate_stfn, QPushButton#btn_calculate_ranking {
-    background-color: #4A89C9; /* Użycie koloru Navbara jako koloru głównej akcji */
-    color: #FFFFFF;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 15px;
-    font-weight: 600;
-    min-height: 25px;
-}
-
-QPushButton#btn_load_data:hover, QPushButton:hover {
-    background-color: #3c72b0;
-}</string>
+        <string notr="true"/>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,6">
         <item>
@@ -402,102 +330,7 @@ QPushButton#btn_load_data:hover, QPushButton:hover {
       </widget>
       <widget class="QWidget" name="stfn_page">
        <property name="styleSheet">
-        <string notr="true">/* --- BLOK CSS SKOPIOWANY Z GLOBALNEGO --- */
-
-/* Tło centralnej sekcji powinno być jasne i neutralne */
-/*
-QWidget {
-    background-color: #F8F9FA;
-}
-*/
-
-/* Ogólny styl dla etykiet (Label) */
-QLabel {
-    color: #1b2735; /* Ciemny, czytelny tekst */
-}
-
-/* Styl dla głównego nagłówka strony (np. lbl_data_management) */
-QLabel#lbl_stfn_analysis {
-    font-size: 24px; 
-    font-weight: bold;
-    padding: 10px 0;
-}
-
-/* KONTENERY GRUPUJĄCE (QGroupBox) */
-
-QGroupBox {
-    color: #4A89C9; 
-    font-weight: bold;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    margin-top: 10px; 
-    padding: 10px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 0 5px;
-    color: #4A89C9; 
-    font-size: 12px;
-}
-
-/* POLA WEJŚCIA DANYCH (QTextEdit, QPlainTextEdit) */
-
-QTextEdit, QPlainTextEdit {
-    background-color: #FFFFFF;
-	color: #1b2735;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    padding: 5px;
-    /* Ograniczenie wysokości dla spójności z przyciskami (domyślny dla Inputów) */
-    max-height: 30px;
-}
-QTextEdit#txt_bounds, QPlainTextEdit#txt_bounds_data {
-    /* Dla pola na Bounds potrzebujemy więcej miejsca */
-    max-height: 70px;
-	color: #1b2735;
-}
-
-QWidget#stfn_page QComboBox {
-    background-color: #FFFFFF;
-	color: #1b2735;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    padding: 5px;
-    min-height: 25px;
-}
-
-
-/* PRZYCISKI AKCJI (Primary Buttons) */
-
-QPushButton#btn_generate_bounds, QPushButton#btn_calculate_stfn {
-    background-color: #4A89C9;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 15px;
-    font-weight: 600;
-    min-height: 25px;
-}
-
-QPushButton#btn_generate_bounds:hover, QPushButton#btn_calculate_stfn:hover {
-    background-color: #3c72b0;
-}
-
-/* PRZYCISKI NAWIGACYJNE WIZUALIZACJI (Secondary Buttons) */
-QGroupBox#stfn_visualization_container QPushButton {
-    background-color: #75aadb; /* Łagodniejszy błękit */
-    color: #FFFFFF;
-    border: 1px solid #3c72b0;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-weight: 500;
-    min-height: 20px;
-}
-QGroupBox#stfn_visualization_container QPushButton:hover {
-    background-color: #619bd1;
-}</string>
+        <string notr="true"/>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
         <item>
@@ -744,8 +577,8 @@ p, li { white-space: pre-wrap; }
                     <widget class="QPushButton" name="btn_previous_visualization">
                      <property name="minimumSize">
                       <size>
-                       <width>100</width>
-                       <height>30</height>
+                       <width>0</width>
+                       <height>0</height>
                       </size>
                      </property>
                      <property name="maximumSize">
@@ -763,8 +596,8 @@ p, li { white-space: pre-wrap; }
                     <widget class="QPushButton" name="btn_next_visualization">
                      <property name="minimumSize">
                       <size>
-                       <width>100</width>
-                       <height>30</height>
+                       <width>0</width>
+                       <height>0</height>
                       </size>
                      </property>
                      <property name="maximumSize">
@@ -809,93 +642,7 @@ p, li { white-space: pre-wrap; }
       </widget>
       <widget class="QWidget" name="mcda_page">
        <property name="styleSheet">
-        <string notr="true">/* --- OGÓLNY KONTEKST DLA STRONY MCDA --- */
-
-/* Ogólny styl dla etykiet (Label) */
-QWidget#mcda_page QLabel {
-    color: #1b2735; /* Ciemny, czytelny tekst */
-}
-
-/* Styl dla głównego nagłówka strony */
-QLabel#lbl_mcda_title {
-    font-size: 24px; 
-    font-weight: bold;
-    padding: 10px 0;
-}
-
-/* --- KONTENERY GRUPUJĄCE (QGroupBox) --- */
-
-QWidget#mcda_page QGroupBox {
-    color: #4A89C9; 
-    font-weight: bold;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    margin-top: 10px; 
-    padding: 10px;
-}
-
-QWidget#mcda_page QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 0 5px;
-    color: #4A89C9; 
-    font-size: 12px;
-}
-
-/* --- POLA WEJŚCIA DANYCH (QTextEdit i QComboBox) --- */
-
-QWidget#mcda_page QTextEdit {
-    background-color: #FFFFFF;
-	color: #1b2735;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    padding: 5px;
-    /* Ograniczenie wysokości dla spójności */
-    max-height: 35px;
-}
-QWidget#mcda_page QComboBox {
-    background-color: #FFFFFF;
-	color: #1b2735;
-    border: 1px solid #c3cedb;
-    border-radius: 4px;
-    padding: 5px;
-    min-height: 25px;
-}
-
-
-/* --- PRZYCISKI AKCJI (Primary Buttons - np. Calculate Ranking) --- */
-
-QPushButton#btn_calculate_ranking {
-    background-color: #4A89C9;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 15px;
-    font-weight: 600;
-    min-height: 25px;
-}
-
-QPushButton#btn_calculate_ranking:hover {
-    background-color: #3c72b0;
-}
-
-/* --- PRZYCISKI WIZUALIZACJI (Secondary Buttons - np. Rank Comaprison) --- */
-QGroupBox#mcda_visualization_container QPushButton {
-    background-color: #75aadb; /* Łagodniejszy błękit */
-    color: #FFFFFF;
-    /* Usunięto 1px solid #3c72b0 na rzecz bardziej płaskiego stylu */
-    border: none; 
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-weight: 500;
-    min-height: 20px;
-}
-QGroupBox#mcda_visualization_container QPushButton:hover {
-    background-color: #619bd1;
-}
-QGroupBox#mcda_visualization_container QPushButton:pressed {
-    background-color: #538cc4;
-}</string>
+        <string notr="true"/>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
         <item>
