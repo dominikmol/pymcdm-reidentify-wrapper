@@ -130,7 +130,7 @@ def show_stfn_plot(app, index):
     
     if 0 <= index < len(app.stfn_plot_data):
         fun, a, m, b, i = app.stfn_plot_data[index]
-        fig, ax = plt.subplots(figsize=(12, 6), dpi=150, tight_layout=True)
+        fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
         tfn_plot(fun, a, m, b, crit=i, ax=ax)
         canvas = FigureCanvas(fig)
         scene.addWidget(canvas)
@@ -224,26 +224,30 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     else:
         scene.clear()
 
-    fig, ax = plt.subplots(figsize=(12, 6), dpi=150, tight_layout=True)
+    fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
     # Create bar plot with bars next to each other
     x = np.arange(len(rank))
     width = 0.4  # Width of the bars
 
-    bars1 = ax.bar(x - width / 2, expert_rank, width, color='blue', alpha=0.7, label='Expert Rank')
-    bars2 = ax.bar(x + width / 2, rank, width, color='orange', alpha=0.7, label='STFN Rank')
+    ax.bar(x - width / 2, expert_rank, width, color='blue', alpha=0.7, label='Expert Rank')
+    ax.bar(x + width / 2, rank, width, color='orange', alpha=0.7, label='STFN Rank')
+
+    # bars1 = ax.bar(x - width / 2, expert_rank, width, color='blue', alpha=0.7, label='Expert Rank')
+    # bars2 = ax.bar(x + width / 2, rank, width, color='orange', alpha=0.7, label='STFN Rank')
     
-    ax.set_yticks(range(int(min(expert_rank)), int(max(expert_rank))+2))
+    # ax.set_yticks(range(int(min(expert_rank)), int(max(expert_rank))+2))
 
     # Add scores above each bar
-    ax.bar_label(bars1, fmt='%.2f', padding=3, fontsize=8)
-    ax.bar_label(bars2, fmt='%.2f', padding=3, fontsize=8)
+    # ax.bar_label(bars1, fmt='%.2f', padding=3, fontsize=8)
+    # ax.bar_label(bars2, fmt='%.2f', padding=3, fontsize=8)
 
     # Add grid to the plot
     ax.grid(True, linestyle='--', alpha=0.7)
 
     ax.set_xlabel('Alternatives')
     ax.set_ylabel('Rank')
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
+    # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
+    ax.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
     ax.set_title(f'STFN-{method}')
     canvas = FigureCanvas(fig)
     scene.addWidget(canvas)
@@ -281,7 +285,7 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
     else:
         scene.clear()
 
-    fig, ax = plt.subplots(figsize=(12, 6), dpi=150, tight_layout=True)
+    fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
     # Create bar plot with bars next to each other
     # x = np.arange(len(rank))
     ax.scatter(expert_rank, rank, color='black')
