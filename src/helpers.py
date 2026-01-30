@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 import os
+import re
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
@@ -108,7 +109,7 @@ def tfn_plot(tfn,
         ax.set_title(f'$C_{crit}^{{core}}={m:.2f}$')
     else:
         ax.annotate(f'$C^{{core}}$', (m - abs(b - a) * 0.01, 1.05), **text_kwargs)
-        ax.set_title(f'$C^{{core}}={m:.2f}$')
+        ax.set_title(f'$C^{{core}}={m:.4f}$')
 
     ax.grid(True, linestyle='--', alpha=0.2, color='black')
     ax.set_axisbelow(True)
@@ -139,6 +140,11 @@ def show_stfn_plot(app, index):
         plt.close(fig)
         app.stfn_plot_index = index
 
+def parse_bounds_from_text(text):
+    matches = re.findall(r'\(([^,]+),\s*([^)]+)\)', text)
+    bounds = np.array([[float(x), float(y)] for x, y in matches])
+    return bounds
+
 def calculate_STFN(app):
     if app.data_matrix is None:
         msg = QMessageBox()
@@ -155,6 +161,9 @@ def calculate_STFN(app):
     app.stfn_plot_data = []
     app.stfn_plot_index = 0
     
+    bounds_text = app.ui.txt_bounds_data.toPlainText().strip()
+    if bounds_text:
+        app.bounds = parse_bounds_from_text(bounds_text)
     bounds = app.bounds
     
     weights_txt = app.ui.txt_criteria_weights.toPlainText()
@@ -202,8 +211,9 @@ def calculate_STFN(app):
     stfn.fit(app.data_matrix, expert_rank, log_to=None)
     app.stfn = stfn
     print(f"cores: {stfn.cores}")
-    
-    app.ui.txt_stfn_results.setPlainText(f"STFN cores: {stfn.cores}")
+
+    cores_formatted = ", ".join([f"{core:.4f}" for core in stfn.cores])
+    app.ui.txt_stfn_results.setPlainText(f"STFN cores: {cores_formatted}")
 
     # text_expert_rank
     app.ui.txt_old_ranking.setPlainText(expert_rank_txt)
@@ -247,7 +257,8 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     ax.set_xlabel('Alternatives')
     ax.set_ylabel('Rank')
     # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
-    ax.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2)
+    # ax.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
     ax.set_title(f'STFN-{method}')
     canvas = FigureCanvas(fig)
     scene.addWidget(canvas)
@@ -352,7 +363,7 @@ def calculate_MCDA(app):
     print(f"expert_rank : {expert_rank}")
     print(f"new rank: {rank}")
 
-    new_rank_txt = np.array2string(rank, separator=', ')[1:-1]
+    new_rank_txt = np.array2string(rank.astype(int), separator=', ')[1:-1]
 
     app.new_rank = rank
     app.ui.txt_new_ranking.setPlainText(new_rank_txt)
