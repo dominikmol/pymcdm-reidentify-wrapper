@@ -1,0 +1,9 @@
+xlrd
+openpyxl
+pandas
+numpy
+matplotlib
+mealpy
+PySide6
+pymcdm-reidentify
+pymcdm
