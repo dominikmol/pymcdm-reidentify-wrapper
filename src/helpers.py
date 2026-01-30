@@ -12,6 +12,19 @@ import os
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
+def clearStates(app):
+    app.stfn = None
+    app.data = None
+    app.data_matrix = None
+    app.bounds = None
+    app.weights = None
+    app.types = None
+    app.stfn_plot_data = []
+    app.stfn_plot_index = 0
+    app.expert_rank = None
+    app.mcda_method = None
+    app.new_rank = None
+
 def load_data(app, file_loc):
     _, extension = os.path.splitext(file_loc)
     extension = extension.lower()
@@ -26,6 +39,8 @@ def load_data(app, file_loc):
 
         if data.size == 0:
             return
+        
+        clearStates(app)
 
         app.data = data
         app.data_matrix = data.iloc[:, 1:].to_numpy()
@@ -115,11 +130,12 @@ def show_stfn_plot(app, index):
     
     if 0 <= index < len(app.stfn_plot_data):
         fun, a, m, b, i = app.stfn_plot_data[index]
-        fig, ax = plt.subplots(figsize=(8, 4), dpi=150, tight_layout=True)
+        fig, ax = plt.subplots(figsize=(12, 6), dpi=150, tight_layout=True)
         tfn_plot(fun, a, m, b, crit=i, ax=ax)
         canvas = FigureCanvas(fig)
         scene.addWidget(canvas)
-        app.ui.gv_stfn_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+        app.ui.gv_stfn_visualization.fitInView(
+            scene.itemsBoundingRect(), Qt.KeepAspectRatio)
         plt.close(fig)
         app.stfn_plot_index = index
 
@@ -208,7 +224,7 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     else:
         scene.clear()
 
-    fig, ax = plt.subplots(figsize=(8, 4), dpi=300, tight_layout=True)
+    fig, ax = plt.subplots(figsize=(12, 6), dpi=150, tight_layout=True)
     # Create bar plot with bars next to each other
     x = np.arange(len(rank))
     width = 0.4  # Width of the bars
@@ -232,7 +248,7 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     canvas = FigureCanvas(fig)
     scene.addWidget(canvas)
     app.ui.gv_mcda_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
-    # plt.show()
+
 
 def rw(rankx, ranky, n):
     suma = 0
@@ -265,9 +281,9 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
     else:
         scene.clear()
 
-    fig, ax = plt.subplots(figsize=(8, 4), dpi=300, tight_layout=True)
+    fig, ax = plt.subplots(figsize=(12, 6), dpi=150, tight_layout=True)
     # Create bar plot with bars next to each other
-    x = np.arange(len(rank))
+    # x = np.arange(len(rank))
     ax.scatter(expert_rank, rank, color='black')
     ax.grid(True, linestyle=':')
     ax.set_xlabel("expert rank")
@@ -279,7 +295,6 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
     canvas = FigureCanvas(fig)
     scene.addWidget(canvas)
     app.ui.gv_correlation_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
-    # plt.show()
 
 def calculate_MCDA(app):
     print("-----------------------------------------")
@@ -321,17 +336,14 @@ def calculate_MCDA(app):
         return
 
     
-    # types = np.array([int(x.strip()) for x in app.ui.txt_criteria_types.toPlainText().split(',')])
     types = np.ones(app.data_matrix.shape[1])
     print(f"MCDA TYPES: {types}")
     weights = app.weights
     print(f"MCDA weights: {weights}")
-    # weights = np.array([float(x.strip()) for x in app.ui.txt_criteria_weights.toPlainText().split(',')])
 
     pref = body(app.data_matrix, weights, types)
     rank = body.rank(pref)
     expert_rank = app.expert_rank
-    # expert_rank = np.array([int(x.strip()) for x in app.ui.txt_alternatives_ranking.toPlainText().split(',')])
     
     print(f"expert_rank : {expert_rank}")
     print(f"new rank: {rank}")

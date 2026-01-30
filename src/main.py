@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 
-import helpers
+import helpers as helpers
 from main_ui import Ui_MainWindow 
 
 class MainWindow(QMainWindow):
@@ -9,6 +9,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setWindowTitle("pymcdm-reidentify-gui")
 
         # initial data
         self.stfn = None
