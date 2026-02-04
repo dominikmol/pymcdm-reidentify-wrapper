@@ -1,158 +1,71 @@
-import pandas as pd
 import numpy as np
 from pymcdm.methods import TOPSIS, VIKOR, WASPAS, MABAC
 from mealpy.swarm_based.PSO import OriginalPSO
 from pymcdm_reidentify.methods import STFN
 from pymcdm_reidentify.normalizations import FuzzyNormalization
-from PySide6.QtWidgets import QTableWidgetItem, QGraphicsScene, QMessageBox
-from PySide6.QtCore import Qt
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-import os
-import re
+from PySide6.QtWidgets import QTableWidgetItem, QMessageBox
+import logic
+import visualization
+
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
-def clearStates(app):
-    app.stfn = None
-    app.data = None
-    app.data_matrix = None
-    app.bounds = None
-    app.weights = None
-    app.types = None
-    app.stfn_plot_data = []
-    app.stfn_plot_index = 0
-    app.expert_rank = None
-    app.mcda_method = None
-    app.new_rank = None
+def showErrorMessage(title, message):
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Critical)
+    msg.setText(title)
+    msg.setInformativeText(message)
+    msg.setWindowTitle("Error")
+    msg.exec()
 
-def load_data(app, file_loc):
-    _, extension = os.path.splitext(file_loc)
-    extension = extension.lower()
+def createDataTable(app, data_frame):
+    full_matrix = data_frame.to_numpy()
+    field_names = list(data_frame.columns)
 
-    try:
-        if extension == '.csv' or extension == '.txt':
-            data = pd.read_csv(file_loc)
-        elif extension == '.xlsx' or extension == '.xls':
-            data = pd.read_excel(file_loc)
-        else:
-            raise ValueError("Unsupported file format")
+    # table = app.ui.data_table
+    table = app.ui.tbl_data_view
+    table.clear()
+    table.setRowCount(full_matrix.shape[0])
+    table.setColumnCount(full_matrix.shape[1])
+    table.verticalHeader().setVisible(False)
+    table.setHorizontalHeaderLabels(field_names)
 
-        if data.size == 0:
-            return
-        
-        clearStates(app)
+    for row in range(full_matrix.shape[0]):
+        for col in range(full_matrix.shape[1]):
+            item = QTableWidgetItem(str(full_matrix[row][col]))
+            table.setItem(row, col, item)
 
-        app.data = data
-        app.data_matrix = data.iloc[:, 1:].to_numpy()
-        full_matrix = data.to_numpy()
-        field_names = list(data.columns)
+def checkIfSTFNReady(app):
+    if app.data_matrix is None:
+        return False
+    if app.bounds is None:
+        return False
+    if app.weights is None:
+        return False
+    if app.expert_rank is None:
+        return False
+    return True
 
-        # table = app.ui.data_table
-        table = app.ui.tbl_data_view
-        table.clear()
-        table.setRowCount(full_matrix.shape[0])
-        table.setColumnCount(full_matrix.shape[1])
-        table.verticalHeader().setVisible(False)
-        table.setHorizontalHeaderLabels(field_names)
+def checkIfPSOReady(pop_size, epoch, c1, c2, w):
+    if pop_size <= 0 or epoch <= 0:
+        return False
+    if not (0 < c1 < 4) or not (0 < c2 < 4) or not (0 < w < 1):
+        return False
+    return True
 
-        for row in range(full_matrix.shape[0]):
-            for col in range(full_matrix.shape[1]):
-                item = QTableWidgetItem(str(full_matrix[row][col]))
-                table.setItem(row, col, item)
-
-    except Exception as e:
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error")
-        msg.setInformativeText(f'Failed to load data: {str(e)}')
-        msg.setWindowTitle("Error")
-        msg.exec()
-        return
-            
-
-def make_bounds(data_matrix):
-    bounds = np.array([[np.min(data_matrix[:, i]), np.max(data_matrix[:, i])]
-                      for i in range(data_matrix.shape[1])])
-    return bounds
-
-def tfn_plot(tfn,
-            a,
-            m,
-            b,
-            crit=None,
-            plot_kwargs=dict(),
-            text_kwargs=dict(),
-            ax=None):
-
-    if ax is None:
-        ax = plt.gca()
-
-    plot_kwargs = dict(
-        linestyle='-',
-        color='black'
-    ) | plot_kwargs
-
-    text_kwargs = dict(
-        color='black'
-    ) | text_kwargs
-
-    width = abs(b - a)
-    start = a - width * 0.1
-    stop  = b + width * 0.1
-    x = np.linspace(start, stop, 150)
-
-    ax.plot(x, tfn(x), **plot_kwargs)
-
-    if crit is not None:
-        ax.annotate(f'$C_{crit}^{{core}}$',(m - abs(b - a) * 0.01, 1.05), **text_kwargs)
-        ax.set_title(f'$C_{crit}^{{core}}={m:.2f}$')
-    else:
-        ax.annotate(f'$C^{{core}}$', (m - abs(b - a) * 0.01, 1.05), **text_kwargs)
-        ax.set_title(f'$C^{{core}}={m:.4f}$')
-
-    ax.grid(True, linestyle='--', alpha=0.2, color='black')
-    ax.set_axisbelow(True)
-    ax.set_ylim(0, 1.3)
-
-    ax.set_ylabel(r'$\mu(x)$')
-    ax.set_xlabel('x')
-
-    return ax
-
-def show_stfn_plot(app, index):
-    # Clear previous scene if exists
-    scene = app.ui.gv_stfn_visualization.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_stfn_visualization.setScene(scene)
-    else:
-        scene.clear()
-    
-    if 0 <= index < len(app.stfn_plot_data):
-        fun, a, m, b, i = app.stfn_plot_data[index]
-        fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
-        tfn_plot(fun, a, m, b, crit=i, ax=ax)
-        canvas = FigureCanvas(fig)
-        scene.addWidget(canvas)
-        app.ui.gv_stfn_visualization.fitInView(
-            scene.itemsBoundingRect(), Qt.KeepAspectRatio)
-        plt.close(fig)
-        app.stfn_plot_index = index
-
-def parse_bounds_from_text(text):
-    matches = re.findall(r'\(([^,]+),\s*([^)]+)\)', text)
-    bounds = np.array([[float(x), float(y)] for x, y in matches])
-    return bounds
+def checkIfMCDAReady(app):
+    if app.stfn is None:
+        return False
+    if app.mcda_method is None:
+        return False
+    return True
 
 def calculate_STFN(app):
     if app.data_matrix is None:
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error")
-        msg.setInformativeText('Please import data first.')
-        msg.setWindowTitle("Error")
-        msg.exec()
+        showErrorMessage(
+            "Error",
+            'Please import data first.'
+            )
         return
 
     print("-----------------------------------------")
@@ -163,7 +76,7 @@ def calculate_STFN(app):
     
     bounds_text = app.ui.txt_bounds_data.toPlainText().strip()
     if bounds_text:
-        app.bounds = parse_bounds_from_text(bounds_text)
+        app.bounds = logic.parse_bounds_from_text(bounds_text)
     bounds = app.bounds
     
     weights_txt = app.ui.txt_criteria_weights.toPlainText()
@@ -177,6 +90,20 @@ def calculate_STFN(app):
     expert_rank_txt = app.ui.txt_alternatives_ranking.toPlainText()
     expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(',')])
     app.expert_rank = expert_rank
+
+    if not checkIfSTFNReady(app):
+        showErrorMessage(
+            "Error",
+            'Make sure data, bounds, weights, and expert rank are set.'
+            )
+        return
+
+    if not checkIfPSOReady(pop_size, epoch, c1, c2, w):
+        showErrorMessage(
+            "Error",
+            'Make sure PSO parameters are valid.'
+            )
+        return
 
     stoch = OriginalPSO(epoch=epoch, pop_size=pop_size, c1=c1, c2=c2, w=w)
     print(f"expert rank: {expert_rank}")
@@ -222,94 +149,8 @@ def calculate_STFN(app):
 
     for i, (fun, a, m, b) in enumerate(zip(stfn(), stfn.lb, stfn.cores, stfn.ub), 1):
         app.stfn_plot_data.append((fun, a, m, b, i))
-    show_stfn_plot(app, 0)
+    visualization.show_stfn_plot(app, 0)
 
-
-def show_mcda_rank_plot(app, expert_rank, rank, method):
-    # Clear previous scene if exists
-    scene = app.ui.gv_mcda_visualization.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_mcda_visualization.setScene(scene)
-    else:
-        scene.clear()
-
-    fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
-    # Create bar plot with bars next to each other
-    x = np.arange(len(rank))
-    width = 0.4  # Width of the bars
-
-    ax.bar(x - width / 2, expert_rank, width, color='blue', alpha=0.7, label='Expert Rank')
-    ax.bar(x + width / 2, rank, width, color='orange', alpha=0.7, label='STFN Rank')
-
-    # bars1 = ax.bar(x - width / 2, expert_rank, width, color='blue', alpha=0.7, label='Expert Rank')
-    # bars2 = ax.bar(x + width / 2, rank, width, color='orange', alpha=0.7, label='STFN Rank')
-    
-    # ax.set_yticks(range(int(min(expert_rank)), int(max(expert_rank))+2))
-
-    # Add scores above each bar
-    # ax.bar_label(bars1, fmt='%.2f', padding=3, fontsize=8)
-    # ax.bar_label(bars2, fmt='%.2f', padding=3, fontsize=8)
-
-    # Add grid to the plot
-    ax.grid(True, linestyle='--', alpha=0.7)
-
-    ax.set_xlabel('Alternatives')
-    ax.set_ylabel('Rank')
-    # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2)
-    # ax.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
-    ax.set_title(f'STFN-{method}')
-    canvas = FigureCanvas(fig)
-    scene.addWidget(canvas)
-    app.ui.gv_mcda_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
-
-
-def rw(rankx, ranky, n):
-    suma = 0
-    for i in range(n):
-        suma += ((
-            (rankx[i]-ranky[i])**2)
-            *((n-rankx[i]+1)+(n-ranky[i]+1)
-                    ))
-    suma = 6 * suma
-    denominator = n**4 + n**3 - n**2 - n
-    if denominator == 0:
-        return 0
-    suma = suma / denominator
-    return 1-suma
-
-def WS(rankx, ranky, n):
-    suma = 0
-    for i in range(n):
-        eq = 2 ** (-float(rankx[i]))
-        eq2 = abs(rankx[i] - ranky[i]) / max(abs(1 - rankx[i]), abs(n - rankx[i]))
-        suma += eq * eq2
-    return 1 - suma
-
-def show_mcda_corelation_plot(app, expert_rank, rank, method):
-    # Clear previous scene if exists
-    scene = app.ui.gv_correlation_visualization.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_correlation_visualization.setScene(scene)
-    else:
-        scene.clear()
-
-    fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
-    # Create bar plot with bars next to each other
-    # x = np.arange(len(rank))
-    ax.scatter(expert_rank, rank, color='black')
-    ax.grid(True, linestyle=':')
-    ax.set_xlabel("expert rank")
-    ax.set_ylabel(f"{method} rank")
-    n = len(rank)
-    ax.set_title(
-        f"rw = {rw(expert_rank, rank, n):.5f}\n WS = {WS(expert_rank, rank, n):.5f}"
-        )
-    canvas = FigureCanvas(fig)
-    scene.addWidget(canvas)
-    app.ui.gv_correlation_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
 def calculate_MCDA(app):
     print("-----------------------------------------")
@@ -326,6 +167,14 @@ def calculate_MCDA(app):
     body = None
 
     method = app.mcda_method
+
+    if not checkIfMCDAReady(app):
+        showErrorMessage(
+            "Error",
+            'Please make sure STFN is calculated and MCDA method is selected.'
+            )
+        return
+
     ob_norm = FuzzyNormalization(app.stfn())
 
     if method == "TOPSIS":
@@ -342,12 +191,10 @@ def calculate_MCDA(app):
         print(method)
     
     if body is None:
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error")
-        msg.setInformativeText('Please choose a valid MCDA method.')
-        msg.setWindowTitle("Error")
-        msg.exec()
+        showErrorMessage(
+            "Error",
+            'Please choose a valid MCDA method.'
+            )
         return
 
     
@@ -376,5 +223,5 @@ def calculate_MCDA(app):
     print("app.data_matrix shape:", app.data_matrix.shape)
     print(len(weights), len(types), len(app.bounds))
 
-    show_mcda_rank_plot(app, expert_rank, rank, method)
-    show_mcda_corelation_plot(app, expert_rank, rank, method)
+    visualization.show_mcda_rank_plot(app, expert_rank, rank, method)
+    visualization.show_mcda_corelation_plot(app, expert_rank, rank, method)

@@ -1,8 +1,12 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 
-import helpers as helpers
-from main_ui import Ui_MainWindow 
+import helpers
+import data_manager
+import logic
+import visualization 
+from main_ui import Ui_MainWindow
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -48,36 +52,30 @@ class MainWindow(QMainWindow):
         if dialog_successful:
             selected_file = dialog.selectedFiles()[0]
             self.ui.txt_data_input.setText(selected_file)
-            helpers.load_data(self, selected_file)
+            data_manager.load_data(self, selected_file)
         else:
             print("File selection canceled")
 
     def make_bounds_handle(self):
         if self.data_matrix is None or self.data_matrix.size == 0:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Error")
-            msg.setInformativeText('Please import data first.')
-            msg.setWindowTitle("Error")
-            msg.exec()
+            helpers.showErrorMessage(
+                "Error",
+                'Please import data first.'
+                )
             return
-        self.bounds = helpers.make_bounds(self.data_matrix)
+        self.bounds = logic.make_bounds(self.data_matrix)
         formatted = ', '.join(f'({x}, {y})' for x, y in self.bounds)
         self.ui.txt_bounds_data.setPlainText(formatted)
-
-    # def change_expert_rank_handle(self):
-    #     txt_alternatives_ranking = self.ui.txt_alternatives_ranking.toPlainText()
-    #     self.ui.txt_old_ranking.setPlainText(txt_alternatives_ranking)
 
     def show_prev_stfn_plot(self):
         if self.stfn_plot_data:
             index = (self.stfn_plot_index - 1) % len(self.stfn_plot_data)
-            helpers.show_stfn_plot(self, index)
+            visualization.show_stfn_plot(self, index)
 
     def show_next_stfn_plot(self):
         if self.stfn_plot_data:
             index = (self.stfn_plot_index + 1) % len(self.stfn_plot_data)
-            helpers.show_stfn_plot(self, index)
+            visualization.show_stfn_plot(self, index)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
