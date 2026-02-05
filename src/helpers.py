@@ -1,9 +1,9 @@
-import numpy as np
 from pymcdm.methods import TOPSIS, VIKOR, WASPAS, MABAC
 from mealpy.swarm_based.PSO import OriginalPSO
 from pymcdm_reidentify.methods import STFN
 from pymcdm_reidentify.normalizations import FuzzyNormalization
 from PySide6.QtWidgets import QTableWidgetItem, QMessageBox
+import numpy as np
 import logic
 import visualization
 
@@ -68,8 +68,8 @@ def calculate_STFN(app):
             )
         return
 
-    print("-----------------------------------------")
-    print("calculateSTFN")
+    # print("-----------------------------------------")
+    # print("calculateSTFN")
     app.ui.txt_stfn_results.clear()
     app.stfn_plot_data = []
     app.stfn_plot_index = 0
@@ -106,25 +106,25 @@ def calculate_STFN(app):
         return
 
     stoch = OriginalPSO(epoch=epoch, pop_size=pop_size, c1=c1, c2=c2, w=w)
-    print(f"expert rank: {expert_rank}")
-    print(f"data matrix: {app.data_matrix}")
-    print(f"bounds: {bounds}")
+    # print(f"expert rank: {expert_rank}")
+    # print(f"data matrix: {app.data_matrix}")
+    # print(f"bounds: {bounds}")
 
     method = app.ui.cb_mcda_method.currentText()
     app.mcda_method = method
 
     if method == "TOPSIS":
-        print(method)
+        # print(method)
         stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
     elif method == "VIKOR":
         stfn = STFN(stoch.solve, VIKOR(), bounds, weights)
-        print(method)
+        # print(method)
     elif method == "WASPAS":
         stfn = STFN(stoch.solve, WASPAS(), bounds, weights)
-        print(method)
+        # print(method)
     elif method == "MABAC":
         stfn = STFN(stoch.solve, MABAC(), bounds, weights)
-        print(method)
+        # print(method)
     else:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
@@ -137,7 +137,7 @@ def calculate_STFN(app):
     # stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
     stfn.fit(app.data_matrix, expert_rank, log_to=None)
     app.stfn = stfn
-    print(f"cores: {stfn.cores}")
+    # print(f"cores: {stfn.cores}")
 
     cores_formatted = ", ".join([f"{core:.4f}" for core in stfn.cores])
     app.ui.txt_stfn_results.setPlainText(f"STFN cores: {cores_formatted}")
@@ -153,8 +153,8 @@ def calculate_STFN(app):
 
 
 def calculate_MCDA(app):
-    print("-----------------------------------------")
-    print("calculateMCDA")
+    # print("-----------------------------------------")
+    # print("calculateMCDA")
     app.ui.txt_new_ranking.clear()
     if app.stfn is None:
         msg = QMessageBox()
@@ -178,17 +178,17 @@ def calculate_MCDA(app):
     ob_norm = FuzzyNormalization(app.stfn())
 
     if method == "TOPSIS":
-        print(method)
+        # print(method)
         body = TOPSIS(ob_norm)
     elif method == "VIKOR":
         body = VIKOR(ob_norm)
-        print(method)
+        # print(method)
     elif method == "WASPAS":
         body = WASPAS(ob_norm)
-        print(method)
+        # print(method)
     elif method == "MABAC":
         body = MABAC(ob_norm)
-        print(method)
+        # print(method)
     
     if body is None:
         showErrorMessage(
@@ -199,16 +199,16 @@ def calculate_MCDA(app):
 
     
     types = np.ones(app.data_matrix.shape[1])
-    print(f"MCDA TYPES: {types}")
+    # print(f"MCDA TYPES: {types}")
     weights = app.weights
-    print(f"MCDA weights: {weights}")
+    # print(f"MCDA weights: {weights}")
 
     pref = body(app.data_matrix, weights, types)
     rank = body.rank(pref)
     expert_rank = app.expert_rank
     
-    print(f"expert_rank : {expert_rank}")
-    print(f"new rank: {rank}")
+    # print(f"expert_rank : {expert_rank}")
+    # print(f"new rank: {rank}")
 
     new_rank_txt = np.array2string(rank.astype(int), separator=', ')[1:-1]
 
@@ -216,12 +216,12 @@ def calculate_MCDA(app):
     app.ui.txt_new_ranking.setPlainText(new_rank_txt)
 
     
-    print(f"types: {types}")
-    print(f"weights: {weights}")
-    print(f"bounds: {app.bounds}")
-    print(f"stfn cores: {app.stfn.cores}")
-    print("app.data_matrix shape:", app.data_matrix.shape)
-    print(len(weights), len(types), len(app.bounds))
+    # print(f"types: {types}")
+    # print(f"weights: {weights}")
+    # print(f"bounds: {app.bounds}")
+    # print(f"stfn cores: {app.stfn.cores}")
+    # print("app.data_matrix shape:", app.data_matrix.shape)
+    # print(len(weights), len(types), len(app.bounds))
 
     visualization.show_mcda_rank_plot(app, expert_rank, rank, method)
     visualization.show_mcda_corelation_plot(app, expert_rank, rank, method)

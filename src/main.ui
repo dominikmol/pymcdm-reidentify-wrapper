@@ -34,13 +34,13 @@ QLabel#lbl_app_title {
 }
 
 QWidget#nav QPushButton {
-    background-color: #75aadb;
+    background-color: #5DA2E3;
     color: #FFFFFF;
-    border: 2px solid #3c72b0;
-    border-radius: 6px;
+    border: 1px solid #3c72b0;
+    border-radius: 4px;
     margin-bottom: 6px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     min-height: 40px;
     min-width: 200px;
 }
@@ -59,16 +59,36 @@ QPushButton#btn_generate_bounds,
 QPushButton#btn_calculate_stfn, 
 QPushButton#btn_calculate_ranking {
     background-color: #4A89C9;
+	border: 1px solid #3c72b0;
     color: #FFFFFF;
     border: none;
     border-radius: 4px;
     padding: 8px 15px;
     font-weight: 600;
-    min-height: 25px;
+	min-height: 28px;
 }
 
-QPushButton:hover {
-    background-color: #3c72b0;
+QPushButton#btn_previous_visualization, 
+QPushButton#btn_next_visualization {
+    background-color: #4A89C9;
+	border: 1px solid #3c72b0;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-weight: 600;
+    min-width: 60px; 
+}
+
+QPushButton#btn_load_data:hover, 
+QPushButton#btn_generate_bounds:hover, 
+QPushButton#btn_calculate_stfn:hover, 
+QPushButton#btn_calculate_ranking:hover,
+QPushButton#btn_previous_visualization:hover, 
+QPushButton#btn_next_visualization:hover,
+QWidget#nav QPushButton:hover{
+	background-color: #356291;
+    border-color: #2a4d73;
 }
 
 /* CONTAINERS AND ACCENT BORDERS */
@@ -163,7 +183,7 @@ QPlainTextEdit#txt_bounds_data {
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>pymcdm-reidentify</string>
+          <string>pymcdm-reidentify-gui</string>
          </property>
         </widget>
        </item>
@@ -184,8 +204,8 @@ QPlainTextEdit#txt_bounds_data {
         <widget class="QPushButton" name="btn_data_page">
          <property name="minimumSize">
           <size>
-           <width>204</width>
-           <height>50</height>
+           <width>202</width>
+           <height>48</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -195,7 +215,7 @@ QPlainTextEdit#txt_bounds_data {
           </size>
          </property>
          <property name="text">
-          <string>Data</string>
+          <string>Data Page</string>
          </property>
         </widget>
        </item>
@@ -203,8 +223,8 @@ QPlainTextEdit#txt_bounds_data {
         <widget class="QPushButton" name="btn_stfn_page">
          <property name="minimumSize">
           <size>
-           <width>204</width>
-           <height>50</height>
+           <width>202</width>
+           <height>48</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -214,7 +234,7 @@ QPlainTextEdit#txt_bounds_data {
           </size>
          </property>
          <property name="text">
-          <string>stfn</string>
+          <string>STFN Page</string>
          </property>
         </widget>
        </item>
@@ -222,8 +242,8 @@ QPlainTextEdit#txt_bounds_data {
         <widget class="QPushButton" name="btn_mcda_page">
          <property name="minimumSize">
           <size>
-           <width>204</width>
-           <height>50</height>
+           <width>202</width>
+           <height>48</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -233,7 +253,7 @@ QPlainTextEdit#txt_bounds_data {
           </size>
          </property>
          <property name="text">
-          <string>mcda</string>
+          <string>MCDA Page</string>
          </property>
         </widget>
        </item>
@@ -577,7 +597,7 @@ p, li { white-space: pre-wrap; }
                     <widget class="QPushButton" name="btn_previous_visualization">
                      <property name="minimumSize">
                       <size>
-                       <width>0</width>
+                       <width>84</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -596,7 +616,7 @@ p, li { white-space: pre-wrap; }
                     <widget class="QPushButton" name="btn_next_visualization">
                      <property name="minimumSize">
                       <size>
-                       <width>0</width>
+                       <width>84</width>
                        <height>0</height>
                       </size>
                      </property>

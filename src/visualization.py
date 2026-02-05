@@ -1,9 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGraphicsScene
+from PySide6.QtWidgets import QGraphicsScene, QMenu, QFileDialog
+from PySide6.QtGui import QGuiApplication, QImage
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from io import BytesIO
 import logic
+
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
@@ -66,6 +69,10 @@ def show_stfn_plot(app, index):
         fig, ax = plt.subplots(dpi=300)#figsize=(12, 6), dpi=150, tight_layout=True)
         tfn_plot(fun, a, m, b, crit=i, ax=ax)
         canvas = FigureCanvas(fig)
+        canvas.setContextMenuPolicy(Qt.CustomContextMenu)
+        canvas.customContextMenuRequested.connect(
+            lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, "stfn_plot_core_"+str(index+1))
+        )
         scene.addWidget(canvas)
         app.ui.gv_stfn_visualization.fitInView(
             scene.itemsBoundingRect(), Qt.KeepAspectRatio)
@@ -109,6 +116,10 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     # ax.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
     ax.set_title(f'STFN-{method}')
     canvas = FigureCanvas(fig)
+    canvas.setContextMenuPolicy(Qt.CustomContextMenu)
+    canvas.customContextMenuRequested.connect(
+        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, "mcda_rank_plot")
+    )
     scene.addWidget(canvas)
     app.ui.gv_mcda_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
@@ -134,5 +145,54 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
         f"rw = {logic.rw(expert_rank, rank, n):.5f}\n WS = {logic.WS(expert_rank, rank, n):.5f}"
         )
     canvas = FigureCanvas(fig)
+    canvas.setContextMenuPolicy(Qt.CustomContextMenu)
+    canvas.customContextMenuRequested.connect(
+        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, "correlation_plot")
+    )
     scene.addWidget(canvas)
     app.ui.gv_correlation_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+
+
+def open_plot_menu(app, pos, canvas, fig, default_name="plot"):
+    menu = QMenu()
+    menu.setStyleSheet("""
+        QMenu {
+            font-size: 11pt;
+            padding: 6px;
+        }
+        QMenu::item {
+            padding: 6px 20px;
+        }
+    """)
+
+    copy_to_clipboard = menu.addAction("Copy to clipboard")
+    save_png = menu.addAction("Save as PNG")
+    save_pdf = menu.addAction("Save as PDF")
+    save_svg = menu.addAction("Save as SVG")
+
+    save_actions = [save_png, save_pdf, save_svg]
+
+    action = menu.exec(canvas.mapToGlobal(pos))
+
+    if not action:
+        return
+    
+    if action == copy_to_clipboard:
+        buf = BytesIO()
+        fig.savefig(buf, format="png", dpi=300, bbox_inches="tight")
+        buf.seek(0)
+
+        image = QImage.fromData(buf.read(), "PNG")
+        QGuiApplication.clipboard().setImage(image)
+        return
+
+    if action in save_actions:
+        ext = action.text().split()[-1].lower()
+        file_path, _ = QFileDialog.getSaveFileName(
+            app,
+            "Save plot",
+            f"{default_name}.{ext}",
+            f"{ext.upper()} (*.{ext})"
+        )
+        if file_path:
+            fig.savefig(file_path, dpi=300, bbox_inches="tight")

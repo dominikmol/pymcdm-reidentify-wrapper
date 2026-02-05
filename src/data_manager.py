@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from PySide6.QtWidgets import QMessageBox
 from helpers import createDataTable, showErrorMessage
 
 

@@ -41,13 +41,13 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QWidget#nav QPushButton {\n"
-"    background-color: #75aadb;\n"
+"    background-color: #5DA2E3;\n"
 "    color: #FFFFFF;\n"
-"    border: 2px solid #3c72b0;\n"
-"    border-radius: 6px;\n"
+"    border: 1px solid #3c72b0;\n"
+"    border-radius: 4px;\n"
 "    margin-bottom: 6px;\n"
 "    font-size: 13px;\n"
-"    font-weight: 500;\n"
+"    font-weight: 600;\n"
 "    min-height: 40px;\n"
 "    min-width: 200px;\n"
 "}\n"
@@ -66,17 +66,37 @@ class Ui_MainWindow(object):
 "QPushButton#btn_calculate_stfn, \n"
 "QPushButton#btn_calculate_ranking {\n"
 "    background-color: #4A89C9;\n"
+"	border: 1px solid #3c72b0;\n"
 "    color: #FFFFFF;\n"
-"    border: none;\n"
-"    bo"
-                        "rder-radius: 4px;\n"
+""
+                        "    border: none;\n"
+"    border-radius: 4px;\n"
 "    padding: 8px 15px;\n"
 "    font-weight: 600;\n"
-"    min-height: 25px;\n"
+"	min-height: 28px;\n"
 "}\n"
 "\n"
-"QPushButton:hover {\n"
-"    background-color: #3c72b0;\n"
+"QPushButton#btn_previous_visualization, \n"
+"QPushButton#btn_next_visualization {\n"
+"    background-color: #4A89C9;\n"
+"	border: 1px solid #3c72b0;\n"
+"    color: #FFFFFF;\n"
+"    border: none;\n"
+"    border-radius: 4px;\n"
+"    padding: 5px 12px;\n"
+"    font-weight: 600;\n"
+"    min-width: 60px; \n"
+"}\n"
+"\n"
+"QPushButton#btn_load_data:hover, \n"
+"QPushButton#btn_generate_bounds:hover, \n"
+"QPushButton#btn_calculate_stfn:hover, \n"
+"QPushButton#btn_calculate_ranking:hover,\n"
+"QPushButton#btn_previous_visualization:hover, \n"
+"QPushButton#btn_next_visualization:hover,\n"
+"QWidget#nav QPushButton:hover{\n"
+"	background-color: #356291;\n"
+"    border-color: #2a4d73;\n"
 "}\n"
 "\n"
 "/* CONTAINERS AND ACCENT BORDERS */\n"
@@ -86,7 +106,8 @@ class Ui_MainWindow(object):
 "    border: 1px solid #4A89C9;\n"
 "    border-radius: 4px;\n"
 "    margin-top: 10px;\n"
-"    padding: 10px;\n"
+""
+                        "    padding: 10px;\n"
 "}\n"
 "\n"
 "QGroupBox::title {\n"
@@ -114,8 +135,7 @@ class Ui_MainWindow(object):
 "    min-height: 25px;\n"
 "}\n"
 "\n"
-"QTex"
-                        "tEdit#txt_stfn_results, \n"
+"QTextEdit#txt_stfn_results, \n"
 "QTextEdit#txt_new_ranking, \n"
 "QTextEdit#txt_old_ranking,\n"
 "QPlainTextEdit#txt_bounds_data {\n"
@@ -152,21 +172,21 @@ class Ui_MainWindow(object):
 
         self.btn_data_page = QPushButton(self.nav)
         self.btn_data_page.setObjectName(u"btn_data_page")
-        self.btn_data_page.setMinimumSize(QSize(204, 50))
+        self.btn_data_page.setMinimumSize(QSize(202, 48))
         self.btn_data_page.setMaximumSize(QSize(16777215, 40))
 
         self.verticalLayout.addWidget(self.btn_data_page)
 
         self.btn_stfn_page = QPushButton(self.nav)
         self.btn_stfn_page.setObjectName(u"btn_stfn_page")
-        self.btn_stfn_page.setMinimumSize(QSize(204, 50))
+        self.btn_stfn_page.setMinimumSize(QSize(202, 48))
         self.btn_stfn_page.setMaximumSize(QSize(16777215, 40))
 
         self.verticalLayout.addWidget(self.btn_stfn_page)
 
         self.btn_mcda_page = QPushButton(self.nav)
         self.btn_mcda_page.setObjectName(u"btn_mcda_page")
-        self.btn_mcda_page.setMinimumSize(QSize(204, 50))
+        self.btn_mcda_page.setMinimumSize(QSize(202, 48))
         self.btn_mcda_page.setMaximumSize(QSize(16777215, 40))
 
         self.verticalLayout.addWidget(self.btn_mcda_page)
@@ -395,14 +415,14 @@ class Ui_MainWindow(object):
 
         self.btn_previous_visualization = QPushButton(self.stfn_visualization_container)
         self.btn_previous_visualization.setObjectName(u"btn_previous_visualization")
-        self.btn_previous_visualization.setMinimumSize(QSize(0, 0))
+        self.btn_previous_visualization.setMinimumSize(QSize(84, 0))
         self.btn_previous_visualization.setMaximumSize(QSize(100, 16777215))
 
         self.horizontalLayout_6.addWidget(self.btn_previous_visualization)
 
         self.btn_next_visualization = QPushButton(self.stfn_visualization_container)
         self.btn_next_visualization.setObjectName(u"btn_next_visualization")
-        self.btn_next_visualization.setMinimumSize(QSize(0, 0))
+        self.btn_next_visualization.setMinimumSize(QSize(84, 0))
         self.btn_next_visualization.setMaximumSize(QSize(100, 16777215))
 
         self.horizontalLayout_6.addWidget(self.btn_next_visualization)
@@ -578,10 +598,10 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.lbl_app_title.setText(QCoreApplication.translate("MainWindow", u"pymcdm-reidentify", None))
-        self.btn_data_page.setText(QCoreApplication.translate("MainWindow", u"Data", None))
-        self.btn_stfn_page.setText(QCoreApplication.translate("MainWindow", u"stfn", None))
-        self.btn_mcda_page.setText(QCoreApplication.translate("MainWindow", u"mcda", None))
+        self.lbl_app_title.setText(QCoreApplication.translate("MainWindow", u"pymcdm-reidentify-gui", None))
+        self.btn_data_page.setText(QCoreApplication.translate("MainWindow", u"Data Page", None))
+        self.btn_stfn_page.setText(QCoreApplication.translate("MainWindow", u"STFN Page", None))
+        self.btn_mcda_page.setText(QCoreApplication.translate("MainWindow", u"MCDA Page", None))
         self.lbl_data_management.setText(QCoreApplication.translate("MainWindow", u"Data Management", None))
         self.data_input_container.setTitle(QCoreApplication.translate("MainWindow", u"Data Import", None))
         self.btn_load_data.setText(QCoreApplication.translate("MainWindow", u"Load Data", None))

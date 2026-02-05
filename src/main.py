@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 
 import helpers
 import data_manager
@@ -47,14 +47,14 @@ class MainWindow(QMainWindow):
         filters = "All Supported Files (*.csv *.txt *.xlsx *.xls);;CSV Files (*.csv);;Text Files (*.txt);;Excel Files (*.xlsx *.xls)"
         dialog.setNameFilter(filters)
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        dialog_successful = dialog.exec()
+        # dialog_successful = dialog.exec()
 
-        if dialog_successful:
+        if dialog.exec():
             selected_file = dialog.selectedFiles()[0]
             self.ui.txt_data_input.setText(selected_file)
             data_manager.load_data(self, selected_file)
-        else:
-            print("File selection canceled")
+        # else:
+        #     print("File selection canceled")
 
     def make_bounds_handle(self):
         if self.data_matrix is None or self.data_matrix.size == 0:
