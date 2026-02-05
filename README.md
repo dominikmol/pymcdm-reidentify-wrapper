@@ -67,7 +67,7 @@ The application supports **CSV, TXT, XLS, and XLSX** formats. To ensure the STFN
 
 In the **Data** section, click the **"Load Data"** button to import your prepared file.
 
-![Load Data Page](./illustartions/data_page.png)
+![Load Data Page]()
 
 ### Step 2: Configuring STFN
 
@@ -84,10 +84,10 @@ Click the **"Calculate STFN"** button to begin the re-identification process. On
 1. Display the **discovered core values** for the dataset.
 2. Allow you to switch between various plots representing the **redefined core fuzzy numbers**.
 
-![STFN Page](./illustartions/stfn_page.png)
+![STFN Page]()
 
 ### Step 4: Comparison of Rankings
 
 The final page provides a summary of the selected MCDM/MCDA method, weights, and the original ranking. By clicking the **"Calculate Ranking"** button, the application generates a new ranking based on the STFN core values. To visualize the results, the application displays two comparison plots showing the correlation between your initial ranking and the newly calculated one.
 
-![MCDA Page](./illustartions/mcda_page.png)
+![MCDA Page]()
