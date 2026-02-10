@@ -77,6 +77,13 @@ class MainWindow(QMainWindow):
             index = (self.stfn_plot_index + 1) % len(self.stfn_plot_data)
             visualization.show_stfn_plot(self, index)
 
+    def success_handler(self, stfn, extra_data):
+        self.stfn = stfn
+        helpers.on_stfn_calculated(self, stfn, **extra_data)
+
+    def error_handler(self, msg):
+        helpers.on_stfn_error(self, msg)
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

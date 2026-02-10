@@ -91,3 +91,21 @@ Click the **"Calculate STFN"** button to begin the re-identification process. On
 The final page provides a summary of the selected MCDM/MCDA method, weights, and the original ranking. By clicking the **"Calculate Ranking"** button, the application generates a new ranking based on the STFN core values. To visualize the results, the application displays two comparison plots showing the correlation between your initial ranking and the newly calculated one.
 
 ![MCDA Page](./illustartions/mcda_page.png)
+
+
+---
+
+## Additional Features
+
+### Saving and Copying Visualizations
+All generated plots are interactive. You can export them using one of two methods:
+* **Save as Image:** Right-click on any plot and select **"Save as..."** to export the visualization as a `.png`, `.svg`, or `.pdf` file.
+* **Copy to Clipboard:** Right-click on the plot and select **"Copy to Clipboard"** to quickly paste the image into another application.
+
+![Save and Copy Options](./illustartions/save_option.png)
+
+### Automatic Bounds Generation
+If you are unsure about the specific range for your criteria, the application can suggest them automatically:
+* **Generate Bounds:** Located in the STFN configuration section, this button processes your input data and automatically calculates the lower and upper bounds for each criterion.
+
+![Automatic Bounds Generation](./illustartions/bounds_btn.png)
