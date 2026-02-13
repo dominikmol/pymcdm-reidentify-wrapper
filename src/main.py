@@ -84,6 +84,10 @@ class MainWindow(QMainWindow):
     def error_handler(self, msg):
         helpers.on_stfn_error(self, msg)
 
+    def progress_handler(self, epoch, max_epochs):
+        procentage = int((epoch / max_epochs) * 100)
+        self.ui.progressBar.setValue(procentage)
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

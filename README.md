@@ -10,7 +10,7 @@ GUI wrapper for [pymcdm-reidentify](https://github.com/kiziebar/pymcdm-reidentif
 
 The easiest way to use the application on **Windows** is to download the latest executable file from the **Releases** page and double-click it to run the application.
 
-* **Linux:** You can run the executable using **Wine**, though running from source or building your own executable is recommended.
+* **Linux/MacOS:** You can run the application though running from source or building your own executable is recommended.
 
 ### 2. Cloning the repository
 

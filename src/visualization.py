@@ -138,7 +138,7 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
     # x = np.arange(len(rank))
     ax.scatter(expert_rank, rank, color='black')
     ax.grid(True, linestyle=':')
-    ax.set_xlabel("expert rank")
+    ax.set_xlabel("Expert rank")
     ax.set_ylabel(f"{method} rank")
     n = len(rank)
     ax.set_title(

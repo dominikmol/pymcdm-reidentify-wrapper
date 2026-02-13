@@ -17,16 +17,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QGraphicsView, QGroupBox,
     QHBoxLayout, QHeaderView, QLabel, QMainWindow,
-    QPlainTextEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QStackedWidget, QTableWidget, QTableWidgetItem, QTextEdit,
-    QVBoxLayout, QWidget)
+    QPlainTextEdit, QProgressBar, QPushButton, QSizePolicy,
+    QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
+    QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1440, 900)
-        MainWindow.setMinimumSize(QSize(1000, 700))
+        MainWindow.setMinimumSize(QSize(1000, 850))
         MainWindow.setStyleSheet(u"/* SIDEBAR AND NAVIGATION */\n"
 "QWidget#nav {\n"
 "    background-color: #4A89C9;\n"
@@ -140,6 +140,24 @@ class Ui_MainWindow(object):
 "QTextEdit#txt_old_ranking,\n"
 "QPlainTextEdit#txt_bounds_data {\n"
 "    max-height: none;\n"
+"}\n"
+"\n"
+"/* PROGRESS BAR */\n"
+"QProgressBar {\n"
+"    border: 1px solid #4A89C9;\n"
+"    border-radius: 4px;\n"
+"    text-align: center;\n"
+"    color: #FFFFFF;\n"
+"    font-weight: bold;\n"
+"    background-color: #E0E0E"
+                        "0;\n"
+"    height: 25px;\n"
+"}\n"
+"\n"
+"QProgressBar::chunk {\n"
+"    background-color: #4A89C9;\n"
+"    width: 10px;\n"
+"    border-radius: 2px;\n"
 "}")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -309,7 +327,6 @@ class Ui_MainWindow(object):
         self.cb_mcda_method.addItem("")
         self.cb_mcda_method.addItem("")
         self.cb_mcda_method.addItem("")
-        self.cb_mcda_method.addItem("")
         self.cb_mcda_method.setObjectName(u"cb_mcda_method")
 
         self.verticalLayout_6.addWidget(self.cb_mcda_method)
@@ -377,6 +394,12 @@ class Ui_MainWindow(object):
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_6.addItem(self.verticalSpacer_3)
+
+        self.progressBar = QProgressBar(self.stfn_parameters_container)
+        self.progressBar.setObjectName(u"progressBar")
+        self.progressBar.setValue(0)
+
+        self.verticalLayout_6.addWidget(self.progressBar)
 
         self.btn_calculate_stfn = QPushButton(self.stfn_parameters_container)
         self.btn_calculate_stfn.setObjectName(u"btn_calculate_stfn")
@@ -614,8 +637,7 @@ class Ui_MainWindow(object):
         self.label.setText(QCoreApplication.translate("MainWindow", u"MCDA Method", None))
         self.cb_mcda_method.setItemText(0, QCoreApplication.translate("MainWindow", u"TOPSIS", None))
         self.cb_mcda_method.setItemText(1, QCoreApplication.translate("MainWindow", u"VIKOR", None))
-        self.cb_mcda_method.setItemText(2, QCoreApplication.translate("MainWindow", u"WASPAS", None))
-        self.cb_mcda_method.setItemText(3, QCoreApplication.translate("MainWindow", u"MABAC", None))
+        self.cb_mcda_method.setItemText(2, QCoreApplication.translate("MainWindow", u"MABAC", None))
 
         self.lbl_criteria_weights.setText(QCoreApplication.translate("MainWindow", u"Criteria Weights", None))
         self.lbl_population_size.setText(QCoreApplication.translate("MainWindow", u"Population Size", None))

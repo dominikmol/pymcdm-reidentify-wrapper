@@ -1,4 +1,4 @@
-from pymcdm.methods import TOPSIS, VIKOR, WASPAS, MABAC
+from pymcdm.methods import TOPSIS, VIKOR, MABAC
 from mealpy.swarm_based.PSO import OriginalPSO
 from pymcdm_reidentify.methods import STFN
 from pymcdm_reidentify.normalizations import FuzzyNormalization
@@ -8,25 +8,53 @@ import logic
 import visualization
 from PySide6.QtCore import QObject, Signal, QThread
 from PySide6.QtCore import Qt
+import re
+import logging
 
+
+class ProgressLogHandler(logging.Handler):
+    def __init__(self, signal, max_epochs):
+        super().__init__()
+        self.signal = signal
+        self.max_epochs = max_epochs
+        self.epoch_pattern = re.compile(r"Epoch: (\d+)")
+
+    def emit(self, record):
+        msg = self.format(record)
+        match = self.epoch_pattern.search(msg)
+        if match:
+            epoch_number = int(match.group(1))
+            print(f"DEBUG: epoch {epoch_number} out of {self.max_epochs}")
+            self.signal.emit(epoch_number, self.max_epochs)
 
 class STFNWorker(QObject):
     stfn_finished = Signal(object, dict)
     stfn_error = Signal(str)
+    stfn_progress = Signal(int, int)
 
-    def __init__(self, stfn, data_matrix, expert_rank, extra_data):
+    def __init__(self, stfn, data_matrix, expert_rank, extra_data, max_epochs):
         super().__init__()
         self.stfn = stfn
         self.data_matrix = data_matrix
         self.expert_rank = expert_rank
         self.extra_data = extra_data
+        self.max_epochs = max_epochs
 
     def run(self):
+        mealpy_logger = logging.getLogger("mealpy")
+        handler = ProgressLogHandler(self.stfn_progress, self.max_epochs)
+        mealpy_logger.addHandler(handler)
+        mealpy_logger.setLevel(logging.INFO)
         try:
-            self.stfn.fit(self.data_matrix, self.expert_rank)
+            self.stfn.fit(
+                self.data_matrix,
+                self.expert_rank,
+                log_to='console')
             self.stfn_finished.emit(self.stfn, self.extra_data)
         except Exception as e:
             self.stfn_error.emit(str(e))
+        finally:
+            mealpy_logger.removeHandler(handler)
 
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
@@ -98,7 +126,6 @@ def enable_all_buttons(app):
     app.ui.btn_next_visualization.setEnabled(True) 
 
 def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
-    print("DEBUG: Rozpoczynam on_stfn_calculated")
     enable_all_buttons(app)
     
     cores_formatted = ", ".join([f"{core:.4f}" for core in stfn.cores])
@@ -116,13 +143,9 @@ def on_stfn_error(app, error_message):
     showErrorMessage("STFN Calculation Error", error_message)
     enable_all_buttons(app)
 
-# def handle_finished(app, stfn, data):
-#     app.stfn = stfn
-#     on_stfn_calculated(app, stfn, **data)
-
-def set_stfn_to_background(app, stfn, expert_rank, data):
+def set_stfn_to_background(app, stfn, expert_rank, data, max_epochs):
     app.thread = QThread()
-    app.worker = STFNWorker(stfn, app.data_matrix, expert_rank, data)
+    app.worker = STFNWorker(stfn, app.data_matrix, expert_rank, data, max_epochs)
     app.worker.moveToThread(app.thread)
 
     app.worker.stfn_finished.connect(
@@ -133,6 +156,8 @@ def set_stfn_to_background(app, stfn, expert_rank, data):
         app.error_handler,
         type=Qt.QueuedConnection
         )
+
+    app.worker.stfn_progress.connect(app.progress_handler)
 
     app.thread.started.connect(app.worker.run)
 
@@ -166,7 +191,7 @@ def calculate_STFN(app):
     weights_txt = app.ui.txt_criteria_weights.toPlainText()
     weights = np.array([float(x.strip()) for x in weights_txt.split(',')])
     app.weights = weights
-    epoch = int(app.ui.txt_epoch_size.toPlainText())
+    max_epochs = int(app.ui.txt_epoch_size.toPlainText())
     pop_size = int(app.ui.txt_population_size.toPlainText())
     c1 = float(app.ui.txt_c1_size.toPlainText())
     c2 = float(app.ui.txt_c2_size.toPlainText())
@@ -182,7 +207,7 @@ def calculate_STFN(app):
             )
         return
 
-    if not checkIfPSOReady(pop_size, epoch, c1, c2, w):
+    if not checkIfPSOReady(pop_size, max_epochs, c1, c2, w):
         showErrorMessage(
             "Error",
             'Make sure PSO parameters are valid.'
@@ -196,7 +221,10 @@ def calculate_STFN(app):
     method = app.ui.cb_mcda_method.currentText()
     app.mcda_method = method
 
-    stoch = OriginalPSO(epoch=epoch, pop_size=pop_size, c1=c1, c2=c2, w=w)
+    app.ui.progressBar.setRange(0, 100)
+    app.ui.progressBar.setValue(0)
+
+    stoch = OriginalPSO(epoch=max_epochs, pop_size=pop_size, c1=c1, c2=c2, w=w)
 
     if method == "TOPSIS":
         stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
@@ -220,7 +248,7 @@ def calculate_STFN(app):
         'method': method
         }
 
-    set_stfn_to_background(app, stfn, expert_rank, data)
+    set_stfn_to_background(app, stfn, expert_rank, data, max_epochs)
 
 
 def calculate_MCDA(app):
@@ -250,8 +278,6 @@ def calculate_MCDA(app):
         body = TOPSIS(ob_norm)
     elif method == "VIKOR":
         body = VIKOR(ob_norm)
-    elif method == "WASPAS":
-        body = WASPAS(ob_norm)
     elif method == "MABAC":
         body = MABAC(ob_norm)
     

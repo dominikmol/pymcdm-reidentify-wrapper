@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>1000</width>
-    <height>700</height>
+    <height>850</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -131,6 +131,23 @@ QTextEdit#txt_new_ranking,
 QTextEdit#txt_old_ranking,
 QPlainTextEdit#txt_bounds_data {
     max-height: none;
+}
+
+/* PROGRESS BAR */
+QProgressBar {
+    border: 1px solid #4A89C9;
+    border-radius: 4px;
+    text-align: center;
+    color: #FFFFFF;
+    font-weight: bold;
+    background-color: #E0E0E0;
+    height: 25px;
+}
+
+QProgressBar::chunk {
+    background-color: #4A89C9;
+    width: 10px;
+    border-radius: 2px;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -420,11 +437,6 @@ QPlainTextEdit#txt_bounds_data {
                 </item>
                 <item>
                  <property name="text">
-                  <string>WASPAS</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
                   <string>MABAC</string>
                  </property>
                 </item>
@@ -542,6 +554,13 @@ p, li { white-space: pre-wrap; }
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QProgressBar" name="progressBar">
+                <property name="value">
+                 <number>0</number>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="btn_calculate_stfn">
