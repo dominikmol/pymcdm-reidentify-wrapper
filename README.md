@@ -1,4 +1,4 @@
-# pymcdm-reidentify-wrapper
+# RankTune-MCDA
 
 GUI wrapper for [pymcdm-reidentify](https://github.com/kiziebar/pymcdm-reidentify) Python package.
 
@@ -18,8 +18,8 @@ If you prefer to run the application from the source code:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/dominikmol/pymcdm-reidentify-wrapper.git
-    cd pymcdm-reidentify-wrapper
+    git clone https://github.com/dominikmol/RankTune-MCDA.git
+    cd RankTune-MCDA
     ```
 2. Set up the environment:
     It is recommended to create a virtual environment before installing dependencies:

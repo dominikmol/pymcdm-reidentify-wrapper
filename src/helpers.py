@@ -214,8 +214,6 @@ def calculate_STFN(app):
             )
         return
 
-    app.ui.txt_stfn_results.setPlainText("WORKING!!!!!!!!!!!")
-
     disable_all_buttons(app)
 
     method = app.ui.cb_mcda_method.currentText()
