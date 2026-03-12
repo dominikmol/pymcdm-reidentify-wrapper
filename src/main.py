@@ -1,5 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtCore import Qt
 
 import helpers
 import data_manager
@@ -13,7 +14,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle("pymcdm-reidentify-gui")
+        self.setWindowTitle("RankTune-MCDA")
 
         # initial data
         self.stfn = None
@@ -27,6 +28,7 @@ class MainWindow(QMainWindow):
         self.expert_rank = None
         self.mcda_method = None
         self.new_rank = None
+        self.stfn_mcda_body = None
 
         # actions
         self.ui.btn_load_data.clicked.connect(self.load_data_handle)
@@ -34,12 +36,15 @@ class MainWindow(QMainWindow):
         self.ui.btn_calculate_stfn.clicked.connect(lambda: helpers.calculate_STFN(self))
         self.ui.btn_calculate_ranking.clicked.connect(lambda: helpers.calculate_MCDA(self))
         self.ui.btn_previous_visualization.clicked.connect(self.show_prev_stfn_plot)
-        self.ui.btn_next_visualization.clicked.connect(self.show_next_stfn_plot)      
+        self.ui.btn_next_visualization.clicked.connect(self.show_next_stfn_plot)    
+        self.ui.btn_stfn_model_visualization.clicked.connect(lambda: visualization.show_rank_reversal_plot(self, "stfn"))  
+        self.ui.btn_expert_model_visualization.clicked.connect(lambda: visualization.show_rank_reversal_plot(self, "expert"))
 
         # switching pages
         self.ui.btn_data_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.data_page))
         self.ui.btn_stfn_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.stfn_page))
         self.ui.btn_mcda_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.mcda_page))
+        self.ui.btn_reversal_page.clicked.connect(lambda: self.ui.pages.setCurrentWidget(self.ui.reversal_page))
 
 
     def load_data_handle(self):
@@ -84,6 +89,16 @@ class MainWindow(QMainWindow):
     def progress_handler(self, epoch, max_epochs):
         procentage = int((epoch / max_epochs) * 100)
         self.ui.progressBar.setValue(procentage)
+
+    def _refit_all_graphics_views(self):
+        for gv in [self.ui.gv_stfn_visualization, self.ui.gv_mcda_visualization, 
+                   self.ui.gv_correlation_visualization, self.ui.gv_rank_reversal]:
+            if gv.scene() and gv.scene().itemsBoundingRect().isValid():
+                gv.fitInView(gv.scene().itemsBoundingRect(), Qt.KeepAspectRatio)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._refit_all_graphics_views()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

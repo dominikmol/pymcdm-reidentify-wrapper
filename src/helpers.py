@@ -228,8 +228,6 @@ def calculate_STFN(app):
         stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
     elif method == "VIKOR":
         stfn = STFN(stoch.solve, VIKOR(), bounds, weights)
-    elif method == "WASPAS":
-        stfn = STFN(stoch.solve, WASPAS(), bounds, weights)
     elif method == "MABAC":
         stfn = STFN(stoch.solve, MABAC(), bounds, weights)
     else:
@@ -291,6 +289,7 @@ def calculate_MCDA(app):
     weights = app.weights
 
     pref = body(app.data_matrix, weights, types)
+    app.stfn_mcda_body = body
     rank = body.rank(pref)
     expert_rank = app.expert_rank
 
