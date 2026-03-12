@@ -6,6 +6,9 @@ from PySide6.QtGui import QGuiApplication, QImage
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from io import BytesIO
 import logic
+from pymcdm.helpers import leave_one_out_rr
+from pymcdm.correlations import weighted_spearman
+from pymcdm.visuals import rankings_flow_correlation
 
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
@@ -71,7 +74,7 @@ def show_stfn_plot(app, index):
         canvas = FigureCanvas(fig)
         canvas.setContextMenuPolicy(Qt.CustomContextMenu)
         canvas.customContextMenuRequested.connect(
-            lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, "stfn_plot_core_"+str(index+1))
+            lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, f"stfn_plot_core_{index+1}_plot")
         )
         scene.addWidget(canvas)
         app.ui.gv_stfn_visualization.fitInView(
@@ -107,7 +110,7 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     canvas = FigureCanvas(fig)
     canvas.setContextMenuPolicy(Qt.CustomContextMenu)
     canvas.customContextMenuRequested.connect(
-        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, "mcda_rank_plot")
+        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, f"mcda_{method}_rank_plot")
     )
     scene.addWidget(canvas)
     app.ui.gv_mcda_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
@@ -134,11 +137,56 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
     canvas = FigureCanvas(fig)
     canvas.setContextMenuPolicy(Qt.CustomContextMenu)
     canvas.customContextMenuRequested.connect(
-        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, "correlation_plot")
+        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, f"{method}_correlation_plot")
     )
     scene.addWidget(canvas)
     app.ui.gv_correlation_visualization.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
+def show_rank_reversal_plot(app, reversal_type):
+    # Clear previous scene if exists
+    scene = app.ui.gv_rank_reversal.scene()
+    if scene is None:
+        scene = QGraphicsScene()
+        app.ui.gv_rank_reversal.setScene(scene)
+    else:
+        scene.clear()
+
+    types = np.ones(len(app.bounds))
+    if reversal_type == "expert":
+        types = logic.get_types_from_cores(app.stfn.cores, app.bounds)
+
+    body = None
+    if reversal_type == "expert":
+        body = logic.generate_mcda_body(app.mcda_method)
+    if reversal_type == "stfn":
+        body = app.stfn_mcda_body
+
+    rankings, corr, labels = leave_one_out_rr(
+        method=body, matrix=app.data_matrix, weights=app.weights, types=types,
+        corr_function=weighted_spearman,
+        only_rr=False)
+    
+    # plot scaling with number of rankings
+    num_rankings = len(rankings)
+    figsize_height = max(8, num_rankings * 0.25)
+    figsize_width = max(10, num_rankings * 0.6)
+    
+    fig, ax = plt.subplots(figsize=(figsize_width, figsize_height), dpi=300)
+    ax, cax = rankings_flow_correlation(
+            rankings=rankings, correlations=corr, labels=labels,
+            correlation_plot_kwargs=dict(space_multiplier=0.15),
+            ranking_flows_kwargs=dict(better_grid=True),
+            correlation_ax_size='10%',
+            ax=ax)
+    cax.set_ylim(0.75, 1.05)
+    plt.tight_layout(pad=1.0)
+    canvas = FigureCanvas(fig)
+    canvas.setContextMenuPolicy(Qt.CustomContextMenu)
+    canvas.customContextMenuRequested.connect(
+        lambda pos, c=canvas, f=fig: open_plot_menu(app, pos, c, f, f"{reversal_type}_{app.mcda_method}_rank_reversal_plot")
+    )
+    scene.addWidget(canvas)
+    app.ui.gv_rank_reversal.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
 def open_plot_menu(app, pos, canvas, fig, default_name="plot"):
     menu = QMenu()
@@ -155,9 +203,8 @@ def open_plot_menu(app, pos, canvas, fig, default_name="plot"):
     copy_to_clipboard = menu.addAction("Copy to clipboard")
     save_png = menu.addAction("Save as PNG")
     save_pdf = menu.addAction("Save as PDF")
-    save_svg = menu.addAction("Save as SVG")
 
-    save_actions = [save_png, save_pdf, save_svg]
+    save_actions = [save_png, save_pdf]
 
     action = menu.exec(canvas.mapToGlobal(pos))
 
