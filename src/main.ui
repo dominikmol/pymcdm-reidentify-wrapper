@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1440</width>
-    <height>900</height>
+    <width>1000</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -48,7 +48,8 @@ QWidget#nav QPushButton {
 /* HEADERS AND PRIMARY BUTTONS */
 QLabel#lbl_data_management, 
 QLabel#lbl_stfn_analysis, 
-QLabel#lbl_mcda_title {
+QLabel#lbl_mcda_title,
+QLabel#lbl_reversal_title {
     font-size: 24px;
     font-weight: bold;
     padding: 10px 0;
@@ -69,7 +70,9 @@ QPushButton#btn_calculate_ranking {
 }
 
 QPushButton#btn_previous_visualization, 
-QPushButton#btn_next_visualization {
+QPushButton#btn_next_visualization,
+QPushButton#btn_expert_model_visualization,
+QPushButton#btn_stfn_model_visualization {
     background-color: #4A89C9;
 	border: 1px solid #3c72b0;
     color: #FFFFFF;
@@ -200,7 +203,10 @@ QProgressBar::chunk {
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>pymcdm-reidentify-gui</string>
+          <string>RankTune-MCDA</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -271,6 +277,25 @@ QProgressBar::chunk {
          </property>
          <property name="text">
           <string>MCDA Page</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_reversal_page">
+         <property name="minimumSize">
+          <size>
+           <width>202</width>
+           <height>48</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Rank Reversal Page</string>
          </property>
         </widget>
        </item>
@@ -821,6 +846,78 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="reversal_page">
+       <layout class="QVBoxLayout" name="verticalLayout_reversal">
+        <item>
+         <widget class="QLabel" name="lbl_reversal_title">
+          <property name="text">
+           <string>Rank Reversal Analysis</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="reversal_config_container">
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_stfn_model_visualization">
+             <property name="text">
+              <string>STFN Model</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_expert_model_visualization">
+             <property name="text">
+              <string>Expert Model</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="reversal_results_container">
+          <property name="title">
+           <string>Rank Reversal Visualization</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_rev_results">
+           <item>
+            <widget class="QGraphicsView" name="gv_rank_reversal"/>
            </item>
           </layout>
          </widget>

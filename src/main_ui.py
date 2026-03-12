@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1440, 900)
+        MainWindow.resize(1000, 850)
         MainWindow.setMinimumSize(QSize(1000, 850))
         MainWindow.setStyleSheet(u"/* SIDEBAR AND NAVIGATION */\n"
 "QWidget#nav {\n"
@@ -55,7 +55,8 @@ class Ui_MainWindow(object):
 "/* HEADERS AND PRIMARY BUTTONS */\n"
 "QLabel#lbl_data_management, \n"
 "QLabel#lbl_stfn_analysis, \n"
-"QLabel#lbl_mcda_title {\n"
+"QLabel#lbl_mcda_title,\n"
+"QLabel#lbl_reversal_title {\n"
 "    font-size: 24px;\n"
 "    font-weight: bold;\n"
 "    padding: 10px 0;\n"
@@ -66,10 +67,10 @@ class Ui_MainWindow(object):
 "QPushButton#btn_calculate_stfn, \n"
 "QPushButton#btn_calculate_ranking {\n"
 "    background-color: #4A89C9;\n"
-"	border: 1px solid #3c72b0;\n"
+"	border: 1px solid #3"
+                        "c72b0;\n"
 "    color: #FFFFFF;\n"
-""
-                        "    border: none;\n"
+"    border: none;\n"
 "    border-radius: 4px;\n"
 "    padding: 8px 15px;\n"
 "    font-weight: 600;\n"
@@ -77,7 +78,9 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QPushButton#btn_previous_visualization, \n"
-"QPushButton#btn_next_visualization {\n"
+"QPushButton#btn_next_visualization,\n"
+"QPushButton#btn_expert_model_visualization,\n"
+"QPushButton#btn_stfn_model_visualization {\n"
 "    background-color: #4A89C9;\n"
 "	border: 1px solid #3c72b0;\n"
 "    color: #FFFFFF;\n"
@@ -101,13 +104,13 @@ class Ui_MainWindow(object):
 "\n"
 "/* CONTAINERS AND ACCENT BORDERS */\n"
 "QGroupBox {\n"
-"    color: #4A89C9;\n"
+"    color:"
+                        " #4A89C9;\n"
 "    font-weight: bold;\n"
 "    border: 1px solid #4A89C9;\n"
 "    border-radius: 4px;\n"
 "    margin-top: 10px;\n"
-""
-                        "    padding: 10px;\n"
+"    padding: 10px;\n"
 "}\n"
 "\n"
 "QGroupBox::title {\n"
@@ -145,12 +148,12 @@ class Ui_MainWindow(object):
 "/* PROGRESS BAR */\n"
 "QProgressBar {\n"
 "    border: 1px solid #4A89C9;\n"
-"    border-radius: 4px;\n"
+"    b"
+                        "order-radius: 4px;\n"
 "    text-align: center;\n"
 "    color: #FFFFFF;\n"
 "    font-weight: bold;\n"
-"    background-color: #E0E0E"
-                        "0;\n"
+"    background-color: #E0E0E0;\n"
 "    height: 25px;\n"
 "}\n"
 "\n"
@@ -181,6 +184,7 @@ class Ui_MainWindow(object):
         self.lbl_app_title = QLabel(self.nav)
         self.lbl_app_title.setObjectName(u"lbl_app_title")
         self.lbl_app_title.setStyleSheet(u"")
+        self.lbl_app_title.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.lbl_app_title)
 
@@ -208,6 +212,13 @@ class Ui_MainWindow(object):
         self.btn_mcda_page.setMaximumSize(QSize(16777215, 40))
 
         self.verticalLayout.addWidget(self.btn_mcda_page)
+
+        self.btn_reversal_page = QPushButton(self.nav)
+        self.btn_reversal_page.setObjectName(u"btn_reversal_page")
+        self.btn_reversal_page.setMinimumSize(QSize(202, 48))
+        self.btn_reversal_page.setMaximumSize(QSize(16777215, 40))
+
+        self.verticalLayout.addWidget(self.btn_reversal_page)
 
         self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
@@ -605,6 +616,53 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.setStretch(1, 1)
         self.pages.addWidget(self.mcda_page)
+        self.reversal_page = QWidget()
+        self.reversal_page.setObjectName(u"reversal_page")
+        self.verticalLayout_reversal = QVBoxLayout(self.reversal_page)
+        self.verticalLayout_reversal.setObjectName(u"verticalLayout_reversal")
+        self.lbl_reversal_title = QLabel(self.reversal_page)
+        self.lbl_reversal_title.setObjectName(u"lbl_reversal_title")
+
+        self.verticalLayout_reversal.addWidget(self.lbl_reversal_title)
+
+        self.reversal_config_container = QGroupBox(self.reversal_page)
+        self.reversal_config_container.setObjectName(u"reversal_config_container")
+        self.horizontalLayout_2 = QHBoxLayout(self.reversal_config_container)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+        self.btn_stfn_model_visualization = QPushButton(self.reversal_config_container)
+        self.btn_stfn_model_visualization.setObjectName(u"btn_stfn_model_visualization")
+
+        self.horizontalLayout_2.addWidget(self.btn_stfn_model_visualization)
+
+        self.btn_expert_model_visualization = QPushButton(self.reversal_config_container)
+        self.btn_expert_model_visualization.setObjectName(u"btn_expert_model_visualization")
+
+        self.horizontalLayout_2.addWidget(self.btn_expert_model_visualization)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
+
+
+        self.verticalLayout_reversal.addWidget(self.reversal_config_container)
+
+        self.reversal_results_container = QGroupBox(self.reversal_page)
+        self.reversal_results_container.setObjectName(u"reversal_results_container")
+        self.verticalLayout_rev_results = QVBoxLayout(self.reversal_results_container)
+        self.verticalLayout_rev_results.setObjectName(u"verticalLayout_rev_results")
+        self.gv_rank_reversal = QGraphicsView(self.reversal_results_container)
+        self.gv_rank_reversal.setObjectName(u"gv_rank_reversal")
+
+        self.verticalLayout_rev_results.addWidget(self.gv_rank_reversal)
+
+
+        self.verticalLayout_reversal.addWidget(self.reversal_results_container)
+
+        self.pages.addWidget(self.reversal_page)
 
         self.horizontalLayout.addWidget(self.pages)
 
@@ -621,10 +679,11 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.lbl_app_title.setText(QCoreApplication.translate("MainWindow", u"pymcdm-reidentify-gui", None))
+        self.lbl_app_title.setText(QCoreApplication.translate("MainWindow", u"RankTune-MCDA", None))
         self.btn_data_page.setText(QCoreApplication.translate("MainWindow", u"Data Page", None))
         self.btn_stfn_page.setText(QCoreApplication.translate("MainWindow", u"STFN Page", None))
         self.btn_mcda_page.setText(QCoreApplication.translate("MainWindow", u"MCDA Page", None))
+        self.btn_reversal_page.setText(QCoreApplication.translate("MainWindow", u"Rank Reversal Page", None))
         self.lbl_data_management.setText(QCoreApplication.translate("MainWindow", u"Data Management", None))
         self.data_input_container.setTitle(QCoreApplication.translate("MainWindow", u"Data Import", None))
         self.btn_load_data.setText(QCoreApplication.translate("MainWindow", u"Load Data", None))
@@ -684,5 +743,10 @@ class Ui_MainWindow(object):
         self.mcda_new_ranking_container.setTitle(QCoreApplication.translate("MainWindow", u"New Ranking", None))
         self.mcda_old_ranking_container.setTitle(QCoreApplication.translate("MainWindow", u"Old Ranking", None))
         self.mcda_visualization_container.setTitle(QCoreApplication.translate("MainWindow", u"Rank Comparison Visualization", None))
+        self.lbl_reversal_title.setText(QCoreApplication.translate("MainWindow", u"Rank Reversal Analysis", None))
+        self.reversal_config_container.setTitle("")
+        self.btn_stfn_model_visualization.setText(QCoreApplication.translate("MainWindow", u"STFN Model", None))
+        self.btn_expert_model_visualization.setText(QCoreApplication.translate("MainWindow", u"Expert Model", None))
+        self.reversal_results_container.setTitle(QCoreApplication.translate("MainWindow", u"Rank Reversal Visualization", None))
     # retranslateUi
 
