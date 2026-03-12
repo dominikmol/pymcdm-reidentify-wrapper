@@ -1,5 +1,6 @@
 import re
 import numpy as np
+from pymcdm.methods import TOPSIS, VIKOR, MABAC
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
@@ -34,3 +35,24 @@ def WS(rankx, ranky, n):
         eq2 = abs(rankx[i] - ranky[i]) / max(abs(1 - rankx[i]), abs(n - rankx[i]))
         suma += eq * eq2
     return 1 - suma
+
+def get_types_from_cores(cores, bounds):
+    cores = np.asarray(cores)
+    bounds = np.asarray(bounds)
+    mid_bounds = bounds.mean(axis=1)
+    types = np.where(cores < mid_bounds, -1, 1)
+    # print(f"DEBUG: cores {cores}, mid_bounds {mid_bounds}, types {types}")
+    return types
+
+def generate_mcda_body(method):
+    MCDA_METHODS = {
+        "TOPSIS": TOPSIS,
+        "VIKOR":  VIKOR,
+        "MABAC":  MABAC,
+        }
+
+    mcda_body = MCDA_METHODS.get(method)
+    if not mcda_body:
+        raise ValueError(f"Unsupported MCDA method: {method}")
+    return mcda_body()
+    
