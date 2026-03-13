@@ -81,7 +81,34 @@ def createDataTable(app, data_frame):
     for row in range(full_matrix.shape[0]):
         for col in range(full_matrix.shape[1]):
             item = QTableWidgetItem(str(full_matrix[row][col]))
+            item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
             table.setItem(row, col, item)
+
+    header = table.horizontalHeader()
+    header.setSectionResizeMode(header.ResizeMode.Stretch)
+    header.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
+    
+    table.executeDelayedItemsLayout()
+
+    padding = 10
+    max_height = 20
+    for i in range(table.columnCount()):
+        current_width = header.sectionSize(i)
+        text = table.horizontalHeaderItem(i).text()
+        rect = header.fontMetrics().boundingRect(
+            0, 0, 
+            current_width - 10, 
+            1000,
+            Qt.TextFlag.TextWordWrap | Qt.AlignmentFlag.AlignCenter,
+            text
+        )
+        col_height = rect.height()
+        if col_height > max_height:
+            max_height = col_height
+            
+    header.setFixedHeight(max_height + padding)
+    table.setWordWrap(True)
+    table.resizeRowsToContents()
 
 def checkIfSTFNReady(app):
     if app.data_matrix is None:
