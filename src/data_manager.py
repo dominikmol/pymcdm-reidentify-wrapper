@@ -1,5 +1,7 @@
 import os
+
 import pandas as pd
+
 from helpers import createDataTable, showErrorMessage
 
 
@@ -22,16 +24,16 @@ def load_data(app, file_loc):
     extension = extension.lower()
 
     try:
-        if extension == '.csv' or extension == '.txt':
+        if extension == ".csv" or extension == ".txt":
             data = pd.read_csv(file_loc)
-        elif extension == '.xlsx' or extension == '.xls':
+        elif extension == ".xlsx" or extension == ".xls":
             data = pd.read_excel(file_loc)
         else:
             raise ValueError("Unsupported file format")
 
         if data.size == 0:
             raise ValueError("The selected file is empty")
-        
+
         clearStates(app)
 
         app.data = data
@@ -39,8 +41,5 @@ def load_data(app, file_loc):
         createDataTable(app, data)
 
     except Exception as e:
-        showErrorMessage(
-            "Error",
-            f'Failed to load data: {str(e)}'
-            )
+        showErrorMessage("Error", f"Failed to load data: {str(e)}")
         return

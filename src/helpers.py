@@ -1,15 +1,16 @@
-from pymcdm.methods import TOPSIS, VIKOR, MABAC
+import logging
+import re
+
+import numpy as np
 from mealpy.swarm_based.PSO import OriginalPSO
+from pymcdm.methods import MABAC, TOPSIS, VIKOR
 from pymcdm_reidentify.methods import STFN
 from pymcdm_reidentify.normalizations import FuzzyNormalization
-from PySide6.QtWidgets import QTableWidgetItem, QMessageBox
-import numpy as np
+from PySide6.QtCore import QObject, Qt, QThread, Signal
+from PySide6.QtWidgets import QMessageBox, QTableWidgetItem
+
 import logic
 import visualization
-from PySide6.QtCore import QObject, Signal, QThread
-from PySide6.QtCore import Qt
-import re
-import logging
 
 
 class ProgressLogHandler(logging.Handler):
@@ -26,6 +27,7 @@ class ProgressLogHandler(logging.Handler):
             epoch_number = int(match.group(1))
             print(f"DEBUG: epoch {epoch_number} out of {self.max_epochs}")
             self.signal.emit(epoch_number, self.max_epochs)
+
 
 class STFNWorker(QObject):
     stfn_finished = Signal(object, dict)
@@ -46,10 +48,7 @@ class STFNWorker(QObject):
         mealpy_logger.addHandler(handler)
         mealpy_logger.setLevel(logging.INFO)
         try:
-            self.stfn.fit(
-                self.data_matrix,
-                self.expert_rank,
-                log_to='console')
+            self.stfn.fit(self.data_matrix, self.expert_rank, log_to="console")
             self.stfn_finished.emit(self.stfn, self.extra_data)
         except Exception as e:
             self.stfn_error.emit(str(e))
@@ -59,6 +58,7 @@ class STFNWorker(QObject):
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
+
 def showErrorMessage(title, message):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Critical)
@@ -66,6 +66,7 @@ def showErrorMessage(title, message):
     msg.setInformativeText(message)
     msg.setWindowTitle("Error")
     msg.exec()
+
 
 def createDataTable(app, data_frame):
     full_matrix = data_frame.to_numpy()
@@ -81,13 +82,15 @@ def createDataTable(app, data_frame):
     for row in range(full_matrix.shape[0]):
         for col in range(full_matrix.shape[1]):
             item = QTableWidgetItem(str(full_matrix[row][col]))
-            item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
+            item.setTextAlignment(
+                Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft
+            )
             table.setItem(row, col, item)
 
     header = table.horizontalHeader()
     header.setSectionResizeMode(header.ResizeMode.Stretch)
     header.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
-    
+
     table.executeDelayedItemsLayout()
 
     padding = 10
@@ -96,19 +99,22 @@ def createDataTable(app, data_frame):
         current_width = header.sectionSize(i)
         text = table.horizontalHeaderItem(i).text()
         rect = header.fontMetrics().boundingRect(
-            0, 0, 
-            current_width - 10, 
+            0,
+            0,
+            current_width - 10,
             1000,
             Qt.TextFlag.TextWordWrap | Qt.AlignmentFlag.AlignCenter,
-            text
+            text,
         )
         col_height = rect.height()
         if col_height > max_height:
             max_height = col_height
-            
+
     header.setFixedHeight(max_height + padding)
     table.setWordWrap(True)
+    table.setAlternatingRowColors(True)
     table.resizeRowsToContents()
+
 
 def checkIfSTFNReady(app):
     if app.data_matrix is None:
@@ -121,6 +127,7 @@ def checkIfSTFNReady(app):
         return False
     return True
 
+
 def checkIfPSOReady(pop_size, epoch, c1, c2, w):
     if pop_size <= 0 or epoch <= 0:
         return False
@@ -128,12 +135,14 @@ def checkIfPSOReady(pop_size, epoch, c1, c2, w):
         return False
     return True
 
+
 def checkIfMCDAReady(app):
     if app.stfn is None:
         return False
     if app.mcda_method is None:
         return False
     return True
+
 
 def disable_all_buttons(app):
     app.ui.btn_load_data.setEnabled(False)
@@ -150,11 +159,12 @@ def enable_all_buttons(app):
     app.ui.btn_calculate_stfn.setEnabled(True)
     app.ui.btn_calculate_ranking.setEnabled(True)
     app.ui.btn_previous_visualization.setEnabled(True)
-    app.ui.btn_next_visualization.setEnabled(True) 
+    app.ui.btn_next_visualization.setEnabled(True)
+
 
 def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
     enable_all_buttons(app)
-    
+
     cores_formatted = ", ".join([f"{core:.4f}" for core in stfn.cores])
     app.ui.txt_stfn_results.setPlainText(f"STFN cores: {cores_formatted}")
 
@@ -166,23 +176,19 @@ def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
         app.stfn_plot_data.append((fun, a, m, b, i))
     visualization.show_stfn_plot(app, 0)
 
+
 def on_stfn_error(app, error_message):
     showErrorMessage("STFN Calculation Error", error_message)
     enable_all_buttons(app)
+
 
 def set_stfn_to_background(app, stfn, expert_rank, data, max_epochs):
     app.thread = QThread()
     app.worker = STFNWorker(stfn, app.data_matrix, expert_rank, data, max_epochs)
     app.worker.moveToThread(app.thread)
 
-    app.worker.stfn_finished.connect(
-        app.success_handler,
-        type=Qt.QueuedConnection
-        )
-    app.worker.stfn_error.connect(
-        app.error_handler,
-        type=Qt.QueuedConnection
-        )
+    app.worker.stfn_finished.connect(app.success_handler, type=Qt.QueuedConnection)
+    app.worker.stfn_error.connect(app.error_handler, type=Qt.QueuedConnection)
 
     app.worker.stfn_progress.connect(app.progress_handler)
 
@@ -197,26 +203,22 @@ def set_stfn_to_background(app, stfn, expert_rank, data, max_epochs):
     app.thread.start()
 
 
-
 def calculate_STFN(app):
     if app.data_matrix is None:
-        showErrorMessage(
-            "Error",
-            'Please import data first.'
-            )
+        showErrorMessage("Error", "Please import data first.")
         return
 
     app.ui.txt_stfn_results.clear()
     app.stfn_plot_data = []
     app.stfn_plot_index = 0
-    
+
     bounds_text = app.ui.txt_bounds_data.toPlainText().strip()
     if bounds_text:
         app.bounds = logic.parse_bounds_from_text(bounds_text)
     bounds = app.bounds
-    
+
     weights_txt = app.ui.txt_criteria_weights.toPlainText()
-    weights = np.array([float(x.strip()) for x in weights_txt.split(',')])
+    weights = np.array([float(x.strip()) for x in weights_txt.split(",")])
     app.weights = weights
     max_epochs = int(app.ui.txt_epoch_size.toPlainText())
     pop_size = int(app.ui.txt_population_size.toPlainText())
@@ -224,21 +226,17 @@ def calculate_STFN(app):
     c2 = float(app.ui.txt_c2_size.toPlainText())
     w = float(app.ui.txt_w_size.toPlainText())
     expert_rank_txt = app.ui.txt_alternatives_ranking.toPlainText()
-    expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(',')])
+    expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(",")])
     app.expert_rank = expert_rank
 
     if not checkIfSTFNReady(app):
         showErrorMessage(
-            "Error",
-            'Make sure data, bounds, weights, and expert rank are set.'
-            )
+            "Error", "Make sure data, bounds, weights, and expert rank are set."
+        )
         return
 
     if not checkIfPSOReady(pop_size, max_epochs, c1, c2, w):
-        showErrorMessage(
-            "Error",
-            'Make sure PSO parameters are valid.'
-            )
+        showErrorMessage("Error", "Make sure PSO parameters are valid.")
         return
 
     disable_all_buttons(app)
@@ -258,18 +256,15 @@ def calculate_STFN(app):
     elif method == "MABAC":
         stfn = STFN(stoch.solve, MABAC(), bounds, weights)
     else:
-        showErrorMessage(
-            "Error",
-            'Make sure valid MCDA method is selected.'
-        )
+        showErrorMessage("Error", "Make sure valid MCDA method is selected.")
         enable_all_buttons(app)
         return
 
     data = {
-        'expert_rank_txt': expert_rank_txt,
-        'weights_txt': weights_txt,
-        'method': method
-        }
+        "expert_rank_txt": expert_rank_txt,
+        "weights_txt": weights_txt,
+        "method": method,
+    }
 
     set_stfn_to_background(app, stfn, expert_rank, data, max_epochs)
 
@@ -280,7 +275,7 @@ def calculate_MCDA(app):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
         msg.setText("Error")
-        msg.setInformativeText('Please run STFN first.')
+        msg.setInformativeText("Please run STFN first.")
         msg.setWindowTitle("Error")
         msg.exec()
         return
@@ -290,9 +285,8 @@ def calculate_MCDA(app):
 
     if not checkIfMCDAReady(app):
         showErrorMessage(
-            "Error",
-            'Please make sure STFN is calculated and MCDA method is selected.'
-            )
+            "Error", "Please make sure STFN is calculated and MCDA method is selected."
+        )
         return
 
     ob_norm = FuzzyNormalization(app.stfn())
@@ -303,15 +297,11 @@ def calculate_MCDA(app):
         body = VIKOR(ob_norm)
     elif method == "MABAC":
         body = MABAC(ob_norm)
-    
+
     if body is None:
-        showErrorMessage(
-            "Error",
-            'Please choose a valid MCDA method.'
-            )
+        showErrorMessage("Error", "Please choose a valid MCDA method.")
         return
 
-    
     types = np.ones(app.data_matrix.shape[1])
     weights = app.weights
 
@@ -320,7 +310,7 @@ def calculate_MCDA(app):
     rank = body.rank(pref)
     expert_rank = app.expert_rank
 
-    new_rank_txt = np.array2string(rank.astype(int), separator=', ')[1:-1]
+    new_rank_txt = np.array2string(rank.astype(int), separator=", ")[1:-1]
 
     app.new_rank = rank
     app.ui.txt_new_ranking.setPlainText(new_rank_txt)
