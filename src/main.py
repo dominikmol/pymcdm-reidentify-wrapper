@@ -1,6 +1,9 @@
+import os
 import sys
+import ctypes
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow
 
 import data_manager
@@ -16,6 +19,17 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("RankTune-MCDA")
+
+        # logo setup
+        base_path = os.path.dirname(__file__)
+        icon_path = os.path.join(base_path, "assets", "rank-tune-logo.png")
+        self.setWindowIcon(QIcon(icon_path))
+
+        try:
+            app_id = "ranktune.app"
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+        except Exception as e:
+            print(f"Could not set AppUserModelID: {e}")
 
         # initial data
         self.stfn = None
