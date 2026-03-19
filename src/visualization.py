@@ -1,5 +1,3 @@
-from io import BytesIO
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -7,8 +5,6 @@ from pymcdm.correlations import weighted_spearman
 from pymcdm.helpers import leave_one_out_rr
 from pymcdm.visuals import rankings_flow_correlation
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QGuiApplication, QImage
-from PySide6.QtWidgets import QFileDialog, QGraphicsScene, QMenu
 
 import logic
 import validation
@@ -62,7 +58,7 @@ def show_stfn_plot(app, index):
         canvas = FigureCanvas(fig)
         canvas.setContextMenuPolicy(Qt.CustomContextMenu)
         canvas.customContextMenuRequested.connect(
-            lambda pos, c=canvas, f=fig: open_plot_menu(
+            lambda pos, c=canvas, f=fig: ui_helpers.open_plot_menu(
                 app, pos, c, f, f"stfn_plot_core_{index + 1}_plot"
             )
         )
@@ -97,7 +93,7 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
     canvas = FigureCanvas(fig)
     canvas.setContextMenuPolicy(Qt.CustomContextMenu)
     canvas.customContextMenuRequested.connect(
-        lambda pos, c=canvas, f=fig: open_plot_menu(
+        lambda pos, c=canvas, f=fig: ui_helpers.open_plot_menu(
             app, pos, c, f, f"mcda_{method}_rank_plot"
         )
     )
@@ -122,7 +118,7 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
     canvas = FigureCanvas(fig)
     canvas.setContextMenuPolicy(Qt.CustomContextMenu)
     canvas.customContextMenuRequested.connect(
-        lambda pos, c=canvas, f=fig: open_plot_menu(
+        lambda pos, c=canvas, f=fig: ui_helpers.open_plot_menu(
             app, pos, c, f, f"{method}_correlation_plot"
         )
     )
@@ -184,7 +180,7 @@ def show_rank_reversal_plot(app, reversal_type):
     canvas = FigureCanvas(fig)
     canvas.setContextMenuPolicy(Qt.CustomContextMenu)
     canvas.customContextMenuRequested.connect(
-        lambda pos, c=canvas, f=fig: open_plot_menu(
+        lambda pos, c=canvas, f=fig: ui_helpers.open_plot_menu(
             app, pos, c, f, f"{reversal_type}_{app.mcda_method}_rank_reversal_plot"
         )
     )
@@ -192,42 +188,4 @@ def show_rank_reversal_plot(app, reversal_type):
     app.ui.gv_rank_reversal.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
 
-def open_plot_menu(app, pos, canvas, fig, default_name="plot"):
-    menu = QMenu()
-    menu.setStyleSheet("""
-        QMenu {
-            font-size: 11pt;
-            padding: 6px;
-        }
-        QMenu::item {
-            padding: 6px 20px;
-        }
-    """)
 
-    copy_to_clipboard = menu.addAction("Copy to clipboard")
-    save_png = menu.addAction("Save as PNG")
-    save_pdf = menu.addAction("Save as PDF")
-
-    save_actions = [save_png, save_pdf]
-
-    action = menu.exec(canvas.mapToGlobal(pos))
-
-    if not action:
-        return
-
-    if action == copy_to_clipboard:
-        buf = BytesIO()
-        fig.savefig(buf, format="png", dpi=300, bbox_inches="tight")
-        buf.seek(0)
-
-        image = QImage.fromData(buf.read(), "PNG")
-        QGuiApplication.clipboard().setImage(image)
-        return
-
-    if action in save_actions:
-        ext = action.text().split()[-1].lower()
-        file_path, _ = QFileDialog.getSaveFileName(
-            app, "Save plot", f"{default_name}.{ext}", f"{ext.upper()} (*.{ext})"
-        )
-        if file_path:
-            fig.savefig(file_path, dpi=300, bbox_inches="tight")

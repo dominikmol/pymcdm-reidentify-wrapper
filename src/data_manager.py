@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 
-from helpers import createDataTable
 import ui_helpers
 
 
@@ -39,7 +38,7 @@ def load_data(app, file_loc):
 
         app.data = data
         app.data_matrix = data.iloc[:, 1:].to_numpy()
-        createDataTable(app, data)
+        ui_helpers.createDataTable(app, data)
 
     except Exception as e:
         ui_helpers.showErrorMessage("Error", f"Failed to load data: {str(e)}")

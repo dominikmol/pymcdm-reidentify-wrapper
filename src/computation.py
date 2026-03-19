@@ -1,113 +1,18 @@
-import logging
-import re
-
 import numpy as np
 from mealpy.swarm_based.PSO import OriginalPSO
 from pymcdm.methods import MABAC, TOPSIS, VIKOR
 from pymcdm_reidentify.methods import STFN
 from pymcdm_reidentify.normalizations import FuzzyNormalization
-from PySide6.QtCore import QObject, Qt, QThread, Signal
-from PySide6.QtWidgets import QTableWidgetItem
+from PySide6.QtCore import Qt, QThread
 
 import logic
 import visualization
 import validation
 import ui_helpers
-
-
-class ProgressLogHandler(logging.Handler):
-    def __init__(self, signal, max_epochs):
-        super().__init__()
-        self.signal = signal
-        self.max_epochs = max_epochs
-        self.epoch_pattern = re.compile(r"Epoch: (\d+)")
-
-    def emit(self, record):
-        msg = self.format(record)
-        match = self.epoch_pattern.search(msg)
-        if match:
-            epoch_number = int(match.group(1))
-            print(f"DEBUG: epoch {epoch_number} out of {self.max_epochs}")
-            self.signal.emit(epoch_number, self.max_epochs)
-
-
-class STFNWorker(QObject):
-    stfn_finished = Signal(object, dict)
-    stfn_error = Signal(str)
-    stfn_progress = Signal(int, int)
-
-    def __init__(self, stfn, data_matrix, expert_rank, extra_data, max_epochs):
-        super().__init__()
-        self.stfn = stfn
-        self.data_matrix = data_matrix
-        self.expert_rank = expert_rank
-        self.extra_data = extra_data
-        self.max_epochs = max_epochs
-
-    def run(self):
-        mealpy_logger = logging.getLogger("mealpy")
-        handler = ProgressLogHandler(self.stfn_progress, self.max_epochs)
-        mealpy_logger.addHandler(handler)
-        mealpy_logger.setLevel(logging.INFO)
-        try:
-            self.stfn.fit(self.data_matrix, self.expert_rank, log_to="console")
-            self.stfn_finished.emit(self.stfn, self.extra_data)
-        except Exception as e:
-            self.stfn_error.emit(str(e))
-        finally:
-            mealpy_logger.removeHandler(handler)
+import stfn_worker
 
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
-
-
-def createDataTable(app, data_frame):
-    full_matrix = data_frame.to_numpy()
-    field_names = list(data_frame.columns)
-
-    table = app.ui.tbl_data_view
-    table.clear()
-    table.setRowCount(full_matrix.shape[0])
-    table.setColumnCount(full_matrix.shape[1])
-    table.verticalHeader().setVisible(False)
-    table.setHorizontalHeaderLabels(field_names)
-
-    for row in range(full_matrix.shape[0]):
-        for col in range(full_matrix.shape[1]):
-            item = QTableWidgetItem(str(full_matrix[row][col]))
-            item.setTextAlignment(
-                Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft
-            )
-            table.setItem(row, col, item)
-
-    header = table.horizontalHeader()
-    header.setSectionResizeMode(header.ResizeMode.Stretch)
-    header.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
-
-    table.executeDelayedItemsLayout()
-
-    padding = 10
-    max_height = 20
-    for i in range(table.columnCount()):
-        current_width = header.sectionSize(i)
-        text = table.horizontalHeaderItem(i).text()
-        rect = header.fontMetrics().boundingRect(
-            0,
-            0,
-            current_width - 10,
-            1000,
-            Qt.TextFlag.TextWordWrap | Qt.AlignmentFlag.AlignCenter,
-            text,
-        )
-        col_height = rect.height()
-        if col_height > max_height:
-            max_height = col_height
-
-    header.setFixedHeight(max_height + padding)
-    table.setWordWrap(True)
-    table.setAlternatingRowColors(True)
-    table.resizeRowsToContents()
-
 
 def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
     ui_helpers.enable_all_buttons(app)
@@ -131,7 +36,7 @@ def on_stfn_error(app, error_message):
 
 def set_stfn_to_background(app, stfn, expert_rank, data, max_epochs):
     app.thread = QThread()
-    app.worker = STFNWorker(stfn, app.data_matrix, expert_rank, data, max_epochs)
+    app.worker = stfn_worker.STFNWorker(stfn, app.data_matrix, expert_rank, data, max_epochs)
     app.worker.moveToThread(app.thread)
 
     app.worker.stfn_finished.connect(app.success_handler, type=Qt.QueuedConnection)

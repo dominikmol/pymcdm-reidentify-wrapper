@@ -7,10 +7,11 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow
 
 import data_manager
-import helpers
 import logic
 import visualization
 from main_ui import Ui_MainWindow
+import ui_helpers
+import computation
 
 
 class MainWindow(QMainWindow):
@@ -48,9 +49,9 @@ class MainWindow(QMainWindow):
         # actions
         self.ui.btn_load_data.clicked.connect(self.load_data_handle)
         self.ui.btn_generate_bounds.clicked.connect(self.make_bounds_handle)
-        self.ui.btn_calculate_stfn.clicked.connect(lambda: helpers.calculate_STFN(self))
+        self.ui.btn_calculate_stfn.clicked.connect(lambda: computation.calculate_STFN(self))
         self.ui.btn_calculate_ranking.clicked.connect(
-            lambda: helpers.calculate_MCDA(self)
+            lambda: computation.calculate_MCDA(self)
         )
         self.ui.btn_previous_visualization.clicked.connect(self.show_prev_stfn_plot)
         self.ui.btn_next_visualization.clicked.connect(self.show_next_stfn_plot)
@@ -88,7 +89,7 @@ class MainWindow(QMainWindow):
 
     def make_bounds_handle(self):
         if self.data_matrix is None or self.data_matrix.size == 0:
-            helpers.showErrorMessage("Error", "Please import data first.")
+            ui_helpers.showErrorMessage("Error", "Please import data first.")
             return
         self.bounds = logic.make_bounds(self.data_matrix)
         formatted = ", ".join(f"({x}, {y})" for x, y in self.bounds)
@@ -106,10 +107,10 @@ class MainWindow(QMainWindow):
 
     def success_handler(self, stfn, extra_data):
         self.stfn = stfn
-        helpers.on_stfn_calculated(self, stfn, **extra_data)
+        computation.on_stfn_calculated(self, stfn, **extra_data)
 
     def error_handler(self, msg):
-        helpers.on_stfn_error(self, msg)
+        computation.on_stfn_error(self, msg)
 
     def progress_handler(self, epoch, max_epochs):
         procentage = int((epoch / max_epochs) * 100)
