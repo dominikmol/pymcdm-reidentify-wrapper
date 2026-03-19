@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGraphicsView, QGroupBox,
-    QHBoxLayout, QHeaderView, QLabel, QMainWindow,
-    QPlainTextEdit, QProgressBar, QPushButton, QSizePolicy,
-    QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
-    QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QGraphicsView,
+    QGroupBox, QHBoxLayout, QHeaderView, QLabel,
+    QMainWindow, QPlainTextEdit, QProgressBar, QPushButton,
+    QSizePolicy, QSpacerItem, QStackedWidget, QTableWidget,
+    QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -276,6 +276,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.tbl_data_view = QTableWidget(self.data_table_container)
         self.tbl_data_view.setObjectName(u"tbl_data_view")
+        self.tbl_data_view.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.verticalLayout_5.addWidget(self.tbl_data_view)
 

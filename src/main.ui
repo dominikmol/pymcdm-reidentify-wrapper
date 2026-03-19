@@ -383,7 +383,11 @@ QProgressBar::chunk {
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QTableWidget" name="tbl_data_view"/>
+            <widget class="QTableWidget" name="tbl_data_view">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
