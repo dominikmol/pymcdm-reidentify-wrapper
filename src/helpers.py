@@ -7,10 +7,12 @@ from pymcdm.methods import MABAC, TOPSIS, VIKOR
 from pymcdm_reidentify.methods import STFN
 from pymcdm_reidentify.normalizations import FuzzyNormalization
 from PySide6.QtCore import QObject, Qt, QThread, Signal
-from PySide6.QtWidgets import QMessageBox, QTableWidgetItem
+from PySide6.QtWidgets import QTableWidgetItem
 
 import logic
 import visualization
+import validation
+import ui_helpers
 
 
 class ProgressLogHandler(logging.Handler):
@@ -57,15 +59,6 @@ class STFNWorker(QObject):
 
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
-
-
-def showErrorMessage(title, message):
-    msg = QMessageBox()
-    msg.setIcon(QMessageBox.Critical)
-    msg.setText(title)
-    msg.setInformativeText(message)
-    msg.setWindowTitle("Error")
-    msg.exec()
 
 
 def createDataTable(app, data_frame):
@@ -116,54 +109,8 @@ def createDataTable(app, data_frame):
     table.resizeRowsToContents()
 
 
-def checkIfSTFNReady(app):
-    if app.data_matrix is None:
-        return False
-    if app.bounds is None:
-        return False
-    if app.weights is None:
-        return False
-    if app.expert_rank is None:
-        return False
-    return True
-
-
-def checkIfPSOReady(pop_size, epoch, c1, c2, w):
-    if pop_size <= 0 or epoch <= 0:
-        return False
-    if not (0 < c1 < 4) or not (0 < c2 < 4) or not (0 < w < 1):
-        return False
-    return True
-
-
-def checkIfMCDAReady(app):
-    if app.stfn is None:
-        return False
-    if app.mcda_method is None:
-        return False
-    return True
-
-
-def disable_all_buttons(app):
-    app.ui.btn_load_data.setEnabled(False)
-    app.ui.btn_generate_bounds.setEnabled(False)
-    app.ui.btn_calculate_stfn.setEnabled(False)
-    app.ui.btn_calculate_ranking.setEnabled(False)
-    app.ui.btn_previous_visualization.setEnabled(False)
-    app.ui.btn_next_visualization.setEnabled(False)
-
-
-def enable_all_buttons(app):
-    app.ui.btn_load_data.setEnabled(True)
-    app.ui.btn_generate_bounds.setEnabled(True)
-    app.ui.btn_calculate_stfn.setEnabled(True)
-    app.ui.btn_calculate_ranking.setEnabled(True)
-    app.ui.btn_previous_visualization.setEnabled(True)
-    app.ui.btn_next_visualization.setEnabled(True)
-
-
 def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
-    enable_all_buttons(app)
+    ui_helpers.enable_all_buttons(app)
 
     cores_formatted = ", ".join([f"{core:.4f}" for core in stfn.cores])
     app.ui.txt_stfn_results.setPlainText(f"STFN cores: {cores_formatted}")
@@ -178,8 +125,8 @@ def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
 
 
 def on_stfn_error(app, error_message):
-    showErrorMessage("STFN Calculation Error", error_message)
-    enable_all_buttons(app)
+    ui_helpers.showErrorMessage("STFN Calculation Error", error_message)
+    ui_helpers.enable_all_buttons(app)
 
 
 def set_stfn_to_background(app, stfn, expert_rank, data, max_epochs):
@@ -205,7 +152,7 @@ def set_stfn_to_background(app, stfn, expert_rank, data, max_epochs):
 
 def calculate_STFN(app):
     if app.data_matrix is None:
-        showErrorMessage("Error", "Please import data first.")
+        ui_helpers.showErrorMessage("Error", "Please import data first.")
         return
 
     app.ui.txt_stfn_results.clear()
@@ -229,17 +176,19 @@ def calculate_STFN(app):
     expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(",")])
     app.expert_rank = expert_rank
 
-    if not checkIfSTFNReady(app):
-        showErrorMessage(
+    if not validation.checkIfSTFNReady(app):
+        ui_helpers.showErrorMessage(
             "Error", "Make sure data, bounds, weights, and expert rank are set."
         )
         return
 
-    if not checkIfPSOReady(pop_size, max_epochs, c1, c2, w):
-        showErrorMessage("Error", "Make sure PSO parameters are valid.")
+    if not validation.checkIfPSOReady(pop_size, max_epochs, c1, c2, w):
+        ui_helpers.showErrorMessage("Error", "Make sure PSO parameters are valid.")
         return
 
-    disable_all_buttons(app)
+    ui_helpers.disable_all_buttons(app)
+
+    ui_helpers.clear_or_set_scene(app.ui.gv_stfn_visualization)
 
     method = app.ui.cb_mcda_method.currentText()
     app.mcda_method = method
@@ -256,8 +205,8 @@ def calculate_STFN(app):
     elif method == "MABAC":
         stfn = STFN(stoch.solve, MABAC(), bounds, weights)
     else:
-        showErrorMessage("Error", "Make sure valid MCDA method is selected.")
-        enable_all_buttons(app)
+        ui_helpers.showErrorMessage("Error", "Make sure valid MCDA method is selected.")
+        ui_helpers.enable_all_buttons(app)
         return
 
     data = {
@@ -272,19 +221,14 @@ def calculate_STFN(app):
 def calculate_MCDA(app):
     app.ui.txt_new_ranking.clear()
     if app.stfn is None:
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error")
-        msg.setInformativeText("Please run STFN first.")
-        msg.setWindowTitle("Error")
-        msg.exec()
+        ui_helpers.showErrorMessage("Error", "Please run STFN first.")
         return
     body = None
 
     method = app.mcda_method
 
-    if not checkIfMCDAReady(app):
-        showErrorMessage(
+    if not validation.checkIfMCDAReady(app):
+        ui_helpers.showErrorMessage(
             "Error", "Please make sure STFN is calculated and MCDA method is selected."
         )
         return
@@ -299,7 +243,7 @@ def calculate_MCDA(app):
         body = MABAC(ob_norm)
 
     if body is None:
-        showErrorMessage("Error", "Please choose a valid MCDA method.")
+        ui_helpers.showErrorMessage("Error", "Please choose a valid MCDA method.")
         return
 
     types = np.ones(app.data_matrix.shape[1])

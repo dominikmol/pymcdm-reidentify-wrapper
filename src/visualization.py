@@ -11,6 +11,8 @@ from PySide6.QtGui import QGuiApplication, QImage
 from PySide6.QtWidgets import QFileDialog, QGraphicsScene, QMenu
 
 import logic
+import validation
+import ui_helpers
 
 np.set_printoptions(suppress=True, precision=4, linewidth=100)
 
@@ -51,13 +53,7 @@ def tfn_plot(tfn, a, m, b, crit=None, plot_kwargs=dict(), text_kwargs=dict(), ax
 
 
 def show_stfn_plot(app, index):
-    # Clear previous scene if exists
-    scene = app.ui.gv_stfn_visualization.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_stfn_visualization.setScene(scene)
-    else:
-        scene.clear()
+    scene = ui_helpers.clear_or_set_scene(app.ui.gv_stfn_visualization)
 
     if 0 <= index < len(app.stfn_plot_data):
         fun, a, m, b, i = app.stfn_plot_data[index]
@@ -79,13 +75,7 @@ def show_stfn_plot(app, index):
 
 
 def show_mcda_rank_plot(app, expert_rank, rank, method):
-    # Clear previous scene if exists
-    scene = app.ui.gv_mcda_visualization.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_mcda_visualization.setScene(scene)
-    else:
-        scene.clear()
+    scene = ui_helpers.clear_or_set_scene(app.ui.gv_mcda_visualization)
 
     fig, ax = plt.subplots(dpi=300)
     # Create bar plot with bars next to each other
@@ -118,13 +108,7 @@ def show_mcda_rank_plot(app, expert_rank, rank, method):
 
 
 def show_mcda_corelation_plot(app, expert_rank, rank, method):
-    # Clear previous scene if exists
-    scene = app.ui.gv_correlation_visualization.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_correlation_visualization.setScene(scene)
-    else:
-        scene.clear()
+    scene = ui_helpers.clear_or_set_scene(app.ui.gv_correlation_visualization)
 
     fig, ax = plt.subplots(dpi=300)
     ax.scatter(expert_rank, rank, color="black")
@@ -149,13 +133,13 @@ def show_mcda_corelation_plot(app, expert_rank, rank, method):
 
 
 def show_rank_reversal_plot(app, reversal_type):
-    # Clear previous scene if exists
-    scene = app.ui.gv_rank_reversal.scene()
-    if scene is None:
-        scene = QGraphicsScene()
-        app.ui.gv_rank_reversal.setScene(scene)
-    else:
-        scene.clear()
+    scene = ui_helpers.clear_or_set_scene(app.ui.gv_rank_reversal)
+
+    if not validation.checkIfRankReversalReady(app):
+        ui_helpers.showErrorMessage(
+            "Error", "Make sure to run STFN and MCDA Analysis first."
+        )
+        return
 
     types = np.ones(len(app.bounds))
     if reversal_type == "expert":

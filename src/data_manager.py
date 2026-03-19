@@ -2,7 +2,8 @@ import os
 
 import pandas as pd
 
-from helpers import createDataTable, showErrorMessage
+from helpers import createDataTable
+import ui_helpers
 
 
 def clearStates(app):
@@ -41,5 +42,5 @@ def load_data(app, file_loc):
         createDataTable(app, data)
 
     except Exception as e:
-        showErrorMessage("Error", f"Failed to load data: {str(e)}")
+        ui_helpers.showErrorMessage("Error", f"Failed to load data: {str(e)}")
         return
