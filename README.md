@@ -1,6 +1,6 @@
 # RankTune-MCDA
 
-GUI wrapper for [pymcdm-reidentify](https://github.com/kiziebar/pymcdm-reidentify) Python package.
+RankTune-MCDA is a GUI-based calibration framework for reidentifying MCDA/MCDM models. Built with **PyQt**, it provides a standalone, no-code interface for the [pymcdm-reidentify](https://github.com/kiziebar/pymcdm-reidentify) pipeline.
 
 ---
 
