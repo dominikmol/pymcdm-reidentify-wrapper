@@ -22,7 +22,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("RankTune-MCDA")
 
         # logo setup
-        base_path = os.path.dirname(__file__)
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.dirname(os.path.abspath(__file__))
+            
         icon_path = os.path.join(base_path, "assets", "rank-tune-logo.png")
         self.setWindowIcon(QIcon(icon_path))
 
