@@ -82,6 +82,35 @@ After importing the data, navigate to the **STFN page**. In this section, you wi
 * **Set Weights:** Assign weights to your criteria.
 * **PSO Optimization:** Configure the Particle Swarm Optimization parameters (default values are pre-configured for a quick start).
 
+#### Example configuration
+
+> **Note:** The values below are from testing with the `energy_data.csv` file (located in the `examples` folder).
+> The bounds were generated using the **"Generate Bounds"** button, weights calculated using entropy methods, 
+> and rankings computed using TOPSIS, MABAC, and VIKOR methods.
+
+#### Bounds for example data
+```
+(2.37, 26.77), (1061.592, 283743.351), (1043.217, 273324.487), (752.609, 190442.433), (248.872, 57315.123), (299.369, 50481.621), (1.596, 5765.747)
+```
+
+#### Weights for example data
+```
+0.033, 0.143, 0.144, 0.142, 0.147, 0.143, 0.248
+```
+
+#### Rank for TOPSIS
+```
+12, 27, 2, 11, 18, 25, 32, 10, 15, 9, 5, 4, 30, 20, 7, 8, 29, 24, 17, 19, 23, 26, 1, 21, 31, 6, 28, 13, 3, 16, 14, 33, 22
+```
+#### Rank for MABAC
+```
+25, 20, 21, 19, 3, 26, 32, 4, 7, 18, 28, 15, 29, 13, 22, 1, 30, 14, 2, 9, 6, 11, 5, 24, 31, 12, 27, 17, 23, 8, 16, 33, 10
+```
+#### Rank for VIKOR
+```
+12, 27, 3, 14, 15, 20, 32, 7, 19, 11, 2, 6, 30, 22, 10, 5, 29, 25, 9, 21, 23, 26, 1, 13, 31, 8, 28, 18, 4, 17, 16, 33, 24
+```
+
 ### Step 3: Calculating STFN
 
 Click the **"Calculate STFN"** button to begin the re-identification process. Once the process is finished, the application will:
@@ -92,10 +121,18 @@ Click the **"Calculate STFN"** button to begin the re-identification process. On
 
 ### Step 4: Comparison of Rankings
 
-The final page provides a summary of the selected MCDM/MCDA method, weights, and the original ranking. By clicking the **"Calculate Ranking"** button, the application generates a new ranking based on the STFN core values. To visualize the results, the application displays two comparison plots showing the correlation between your initial ranking and the newly calculated one.
+This page provides a summary of the selected MCDM/MCDA method, weights, and the original ranking. By clicking the **"Calculate Ranking"** button, the application generates a new ranking based on the STFN core values. To visualize the results, the application displays two comparison plots showing the correlation between your initial ranking and the newly calculated one.
 
 ![MCDA Page](./illustartions/mcda_page.png)
 
+### Step 5: Comparison of Rankings
+
+The final page presents a comparison of rank reversal resistance between the [Expert-based model](#rank-reversal---expert-model) and the [STFN-based model](#rank-reversal---stfn-model). This analysis demonstrates the robustness of your MCDA solution to changes in input parameters.
+
+### Rank Reversal - EXPERT Model
+![Rank Reversal - EXPERT Model](./illustartions/rank_reversal_page_expert.png)
+### Rank Reversal - STFN Model
+![Rank Reversal - STFN Model](./illustartions/rank_reversal_page_stfn.png)
 
 ---
 
