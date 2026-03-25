@@ -28,6 +28,14 @@ def on_stfn_calculated(app, stfn, expert_rank_txt, weights_txt, method):
         app.stfn_plot_data.append((fun, a, m, b, i))
     visualization.show_stfn_plot(app, 0)
 
+    ob_norm = FuzzyNormalization(stfn())
+    stfn_methods = {
+        "TOPSIS": TOPSIS(ob_norm),
+        "VIKOR": VIKOR(ob_norm),
+        "MABAC": MABAC(ob_norm),
+    }
+    app.stfn_mcda_body = stfn_methods.get(method)
+
 
 def on_stfn_error(app, error_message):
     ui_helpers.showErrorMessage("STFN Calculation Error", error_message)
@@ -102,17 +110,18 @@ def calculate_STFN(app):
     app.ui.progressBar.setValue(0)
 
     stoch = OriginalPSO(epoch=max_epochs, pop_size=pop_size, c1=c1, c2=c2, w=w)
+    stfn_methods = {
+        "TOPSIS": TOPSIS(),
+        "VIKOR": VIKOR(),
+        "MABAC": MABAC(),
+    }
 
-    if method == "TOPSIS":
-        stfn = STFN(stoch.solve, TOPSIS(), bounds, weights)
-    elif method == "VIKOR":
-        stfn = STFN(stoch.solve, VIKOR(), bounds, weights)
-    elif method == "MABAC":
-        stfn = STFN(stoch.solve, MABAC(), bounds, weights)
-    else:
+    if method not in stfn_methods:
         ui_helpers.showErrorMessage("Error", "Make sure valid MCDA method is selected.")
         ui_helpers.enable_all_buttons(app)
         return
+
+    stfn = STFN(stoch.solve, stfn_methods[method], bounds, weights)
 
     data = {
         "expert_rank_txt": expert_rank_txt,
@@ -128,7 +137,6 @@ def calculate_MCDA(app):
     if app.stfn is None:
         ui_helpers.showErrorMessage("Error", "Please run STFN first.")
         return
-    body = None
 
     method = app.mcda_method
 
@@ -138,24 +146,15 @@ def calculate_MCDA(app):
         )
         return
 
-    ob_norm = FuzzyNormalization(app.stfn())
-
-    if method == "TOPSIS":
-        body = TOPSIS(ob_norm)
-    elif method == "VIKOR":
-        body = VIKOR(ob_norm)
-    elif method == "MABAC":
-        body = MABAC(ob_norm)
-
-    if body is None:
+    if app.stfn_mcda_body is None:
         ui_helpers.showErrorMessage("Error", "Please choose a valid MCDA method.")
         return
 
+    body = app.stfn_mcda_body
     types = np.ones(app.data_matrix.shape[1])
     weights = app.weights
 
     pref = body(app.data_matrix, weights, types)
-    app.stfn_mcda_body = body
     rank = body.rank(pref)
     expert_rank = app.expert_rank
 

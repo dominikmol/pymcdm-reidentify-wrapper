@@ -17,6 +17,7 @@ def clearStates(app):
     app.expert_rank = None
     app.mcda_method = None
     app.new_rank = None
+    app.stfn_mcda_body = None
 
 
 def load_data(app, file_loc):
