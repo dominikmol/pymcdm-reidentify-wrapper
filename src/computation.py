@@ -133,12 +133,7 @@ def calculate_STFN(app):
 
 
 def calculate_MCDA(app):
-    app.ui.txt_new_ranking.clear()
-    if app.stfn is None:
-        ui_helpers.showErrorMessage("Error", "Please run STFN first.")
-        return
-
-    method = app.mcda_method
+    app.ui.txt_new_ranking.clear()    
 
     if not validation.checkIfMCDAReady(app):
         ui_helpers.showErrorMessage(
@@ -146,9 +141,7 @@ def calculate_MCDA(app):
         )
         return
 
-    if app.stfn_mcda_body is None:
-        ui_helpers.showErrorMessage("Error", "Please choose a valid MCDA method.")
-        return
+    method = app.mcda_method
 
     body = app.stfn_mcda_body
     types = np.ones(app.data_matrix.shape[1])

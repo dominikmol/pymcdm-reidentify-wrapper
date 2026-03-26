@@ -15,10 +15,10 @@ def checkIfPSOReady(pop_size, epoch, c1, c2, w):
 
 
 def checkIfMCDAReady(app):
-    if app.stfn is None:
-        return False
-    if app.mcda_method is None:
-        return False
+    to_check = [app.stfn, app.mcda_method, app.stfn_mcda_body]
+    for item in to_check:
+        if item is None:
+            return False
     return True
 
 def checkIfRankReversalReady(app):
