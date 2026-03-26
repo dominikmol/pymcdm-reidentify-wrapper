@@ -78,7 +78,11 @@ def calculate_STFN(app):
     bounds = app.bounds
 
     weights_txt = app.ui.txt_criteria_weights.toPlainText()
-    weights = np.array([float(x.strip()) for x in weights_txt.split(",")])
+    if weights_txt is None or weights_txt.strip() == "":
+        ui_helpers.showErrorMessage("Error", "Please enter criteria weights.")
+        return
+
+    weights = np.array([float(x.strip()) for x in weights_txt.split(",") if x.strip()])
     app.weights = weights
     max_epochs = int(app.ui.txt_epoch_size.toPlainText())
     pop_size = int(app.ui.txt_population_size.toPlainText())
@@ -86,7 +90,11 @@ def calculate_STFN(app):
     c2 = float(app.ui.txt_c2_size.toPlainText())
     w = float(app.ui.txt_w_size.toPlainText())
     expert_rank_txt = app.ui.txt_alternatives_ranking.toPlainText()
-    expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(",")])
+    if expert_rank_txt is None or expert_rank_txt.strip() == "":
+        ui_helpers.showErrorMessage("Error", "Please enter expert ranking.")
+        return
+
+    expert_rank = np.array([int(x.strip()) for x in expert_rank_txt.split(",") if x.strip()])
     app.expert_rank = expert_rank
 
     if not validation.checkIfSTFNReady(app):
