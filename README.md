@@ -22,7 +22,7 @@ If you prefer to run the application from the source code:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/dominikmol/RankTune-MCDA.git
+    git clone https://github.com/domolenda/RankTune-MCDA.git
     cd RankTune-MCDA
     ```
 2. Set up the environment:
